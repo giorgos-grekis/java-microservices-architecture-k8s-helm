@@ -16,4 +16,6 @@ public class CustomerDto {
     @PhoneNumber
     @NotBlank(message = "Mobile number is required")
     private String mobileNumber;
+
+    private AccountsDto accountsDto;
 }

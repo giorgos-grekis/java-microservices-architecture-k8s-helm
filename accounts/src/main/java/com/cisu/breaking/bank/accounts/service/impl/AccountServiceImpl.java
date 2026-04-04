@@ -1,10 +1,13 @@
 package com.cisu.breaking.bank.accounts.service.impl;
 
 import com.cisu.breaking.bank.accounts.constans.AccountsConstants;
+import com.cisu.breaking.bank.accounts.dto.AccountsDto;
 import com.cisu.breaking.bank.accounts.dto.CustomerDto;
 import com.cisu.breaking.bank.accounts.entity.Accounts;
 import com.cisu.breaking.bank.accounts.entity.Customer;
 import com.cisu.breaking.bank.accounts.exception.CustomerAlreadyExistsException;
+import com.cisu.breaking.bank.accounts.exception.ResourceNotFoundException;
+import com.cisu.breaking.bank.accounts.mapper.AccountsMapper;
 import com.cisu.breaking.bank.accounts.mapper.CustomerMapper;
 import com.cisu.breaking.bank.accounts.repository.AccountsRepository;
 import com.cisu.breaking.bank.accounts.repository.CustomerRepository;
@@ -53,6 +56,33 @@ public class AccountServiceImpl implements IAccountsService {
         newAccount.setCreatedBy("Anonymous");
         return newAccount;
     }
+
+    @Override
+    public CustomerDto fetchAccount(String mobileNumber) {
+        Customer customer = customerRepository.findByMobileNumber(mobileNumber)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(
+                                "Customer",
+                                "mobileNumber",
+                                mobileNumber
+                        )
+                );
+
+        Accounts accounts = accountsRepository.findByCustomerId(customer.getCustomerId())
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(
+                                "Account",
+                                "customerId",
+                                customer.getCustomerId().toString()
+                        )
+                );
+
+        CustomerDto customerDto =  CustomerMapper.mapToCustomerDto(customer, new CustomerDto());
+        customerDto.setAccountsDto(AccountsMapper.mapToAccountsDto(accounts, new AccountsDto()));
+
+        return customerDto;
+    }
+
 
 
 }
