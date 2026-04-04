@@ -39,12 +39,8 @@ public class AccountsController {
    public ResponseEntity<CustomerDto> fetchAccountDetails(
            @Valid @RequestParam String mobileNumber
    ) {
-       if (mobileNumber != null && mobileNumber.startsWith(" ")) {
-           mobileNumber = mobileNumber.replaceFirst(" ", "+");
-       }
-
-       mobileNumber = mobileNumber.trim();
-       CustomerDto customerDto = iAccountsService.fetchAccount(mobileNumber);
+       String formattedNumber = formatMobileNumber(mobileNumber);
+       CustomerDto customerDto = iAccountsService.fetchAccount(formattedNumber);
        return ResponseEntity.status(HttpStatus.OK).body(customerDto);
    }
 
@@ -60,5 +56,32 @@ public class AccountsController {
                     .status(HttpStatus.EXPECTATION_FAILED)
                     .body(new ResponseDto(AccountsConstants.STATUS_417, AccountsConstants.MESSAGE_417_UPDATE));
         }
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<ResponseDto> deleteAccountDetails(
+//            @PhoneNumber
+            @RequestParam String mobileNumber) {
+        String formattedNumber = formatMobileNumber(mobileNumber);
+
+        boolean isDeleted = iAccountsService.deleteAccount(formattedNumber);
+        if(isDeleted) {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new ResponseDto(AccountsConstants.STATUS_200, AccountsConstants.MESSAGE_200));
+        }else{
+            return ResponseEntity
+                    .status(HttpStatus.EXPECTATION_FAILED)
+                    .body(new ResponseDto(AccountsConstants.STATUS_417, AccountsConstants.MESSAGE_417_DELETE));
+        }
+    }
+
+
+
+    private String formatMobileNumber(String mobileNumber) {
+        if (mobileNumber != null && mobileNumber.startsWith(" ")) {
+            mobileNumber = mobileNumber.replaceFirst(" ", "+");
+        }
+        return mobileNumber != null ? mobileNumber.trim() : null;
     }
 }

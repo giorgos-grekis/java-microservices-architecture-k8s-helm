@@ -19,4 +19,19 @@ public class PhoneNumberValidator implements ConstraintValidator<PhoneNumber, St
             return false;
         }
     }
+//    @Override
+//    public boolean isValid(String value, ConstraintValidatorContext context) {
+//        if (value == null || value.isBlank()) return true;
+//        String cleanedValue = value.trim();
+//        if (cleanedValue.startsWith(" ")) {
+//            cleanedValue = cleanedValue.replaceFirst(" ", "+");
+//        }
+//
+//        try {
+//            var number = phoneUtil.parse(cleanedValue, "ZZ");
+//            return phoneUtil.isValidNumber(number);
+//        } catch (NumberParseException e) {
+//            return false;
+//        }
+//    }
 }
