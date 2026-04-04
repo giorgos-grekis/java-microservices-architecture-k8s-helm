@@ -42,7 +42,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   WebRequest webRequest) {
         ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
                 webRequest.getDescription(false),
-                HttpStatus.INTERNAL_SERVER_ERROR,
+                HttpStatus.INTERNAL_SERVER_ERROR, // HttpStatus.INTERNAL_SERVER_ERROR.value(), // when go to common-model
                 exception.getMessage(),
                 LocalDateTime.now()
         );
@@ -54,7 +54,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                             WebRequest webRequest) {
         ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
                 webRequest.getDescription(false),
-                HttpStatus.NOT_FOUND,  // HttpStatus.BAD_REQUEST.value(), // when go to common-model
+                HttpStatus.NOT_FOUND,  // HttpStatus.NOT_FOUND.value(), // when go to common-model
                 exception.getMessage(),
                 LocalDateTime.now()
         );
