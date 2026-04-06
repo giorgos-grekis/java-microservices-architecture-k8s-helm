@@ -11,6 +11,11 @@
 	<groupId>com.cisu.breaking.bank</groupId>
 	<artifactId>accounts</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+    <!--
+    because we want to generate Docker images, this tells to maven I want to
+     to package my web application in a jar format
+     -->
+    <packaging>jar</packaging>
 	<name/>
 	<description/>
 	<url/>
