@@ -1,28 +1,3 @@
-########################
-### 433MB
-########################
-
-## Stage 1: Build (Χρησιμοποιούμε JDK)
-#FROM maven:3.9.11-amazoncorretto-25 AS build
-#COPY . .
-#RUN mvn clean package -DskipTests
-#
-### Stage 2: Run (Χρησιμοποιούμε Headless για οικονομία και ασφάλεια)
-##FROM amazoncorretto:25-headless
-##COPY --from=build target/accounts-0.0.1-SNAPSHOT.jar accounts.jar
-##ENTRYPOINT ["java", "-jar", "accounts.jar"]
-#
-## Stage 2: Run (Χρησιμοποιούμε Amazon Corretto σε Alpine για ελάχιστο μέγεθος και σωστό License)
-#FROM amazoncorretto:25-alpine3.23-full
-#COPY --from=build target/accounts-0.0.1-SNAPSHOT.jar app.jar
-#ENTRYPOINT ["java", "-jar", "app.jar"]
-
-
-
-########################
-### NEW docker build
-########################
-
 # ==========================================
 # Stage 1: Build (Χτίσιμο JAR και Custom JRE)
 # ==========================================
@@ -58,6 +33,6 @@ ENV PATH="${JAVA_HOME}/bin:${PATH}"
 COPY --from=build /customjre $JAVA_HOME
 
 # Αντιγράφουμε το JAR του microservice
-COPY --from=build /app/target/accounts-0.0.1-SNAPSHOT.jar accounts.jar
+COPY --from=build /app/target/loans-0.0.1-SNAPSHOT.jar loans.jar
 
-ENTRYPOINT ["java", "-jar", "accounts.jar"]
+ENTRYPOINT ["java", "-jar", "loans.jar"]

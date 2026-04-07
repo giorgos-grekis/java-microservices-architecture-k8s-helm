@@ -12,6 +12,10 @@
     <groupId>com.cisu.breaking.bank</groupId>
     <artifactId>cards</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <!--
+  because we want to generate Docker images, this tells to maven
+  I want to package my web application in a jar format
+   -->
     <packaging>jar</packaging>
     <name>cards</name>
     <description>Microservice for Cards</description>
@@ -122,6 +126,17 @@
                     </excludes>
                 </configuration>
             </plugin>
+            <!--        Need for Google Jib       -->
+<!--            <plugin>-->
+<!--                <groupId>com.google.cloud.tools</groupId>-->
+<!--                <artifactId>jib-maven-plugin</artifactId>-->
+<!--                <version>3.5.1</version>-->
+<!--                <configuration>-->
+<!--                    <to>-->
+<!--                        <image>cisu2/${project.artifactId}:001</image>-->
+<!--                    </to>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
