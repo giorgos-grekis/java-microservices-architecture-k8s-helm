@@ -1,0 +1,16 @@
+spring:
+#  config:
+#    activate:
+#      on-profile: "prod"
+
+build:
+  version: "1.0"
+
+accounts:
+  message: "Welcome to accounts ms PROD"
+  contactDetails:
+    name: "John Doe - PROD"
+    email: "john@testprod.com"
+  onCallSupport:
+    - (000) 666-4269
+    - (111) 999-6942

@@ -17,12 +17,20 @@ spring:
     hibernate:
       ddl-auto: update # create the tables automatically
     show-sql: true # show the sql queries
+  config:
+    import:
+      - "application_qa.yml"
+      - "application_prod.yml"
+    # activate a different profile
+    profiles:
+      active:
+        - "prod"
 
 build:
-  version: "1.0"
+  version: "3.0"
 
 accounts:
-  message: "Welcome to accounts ms"
+  message: "Welcome to accounts ms DEV"
   contactDetails:
     name: "John Doe"
     email: "john@test.com"
