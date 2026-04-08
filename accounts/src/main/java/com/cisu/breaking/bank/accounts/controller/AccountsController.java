@@ -1,6 +1,7 @@
 package com.cisu.breaking.bank.accounts.controller;
 
 import com.cisu.breaking.bank.accounts.constans.AccountsConstants;
+import com.cisu.breaking.bank.accounts.dto.AccountsContactInfoDto;
 import com.cisu.breaking.bank.accounts.dto.CustomerDto;
 import com.cisu.breaking.bank.accounts.dto.ErrorResponseDto;
 import com.cisu.breaking.bank.accounts.dto.ResponseDto;
@@ -12,12 +13,18 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Tag(
         name = "Accounts",
@@ -26,11 +33,22 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/api/v1", produces = {MediaType.APPLICATION_JSON_VALUE})
-@AllArgsConstructor
+//@AllArgsConstructor
+@RequiredArgsConstructor
 @Validated
 public class AccountsController {
 
+
    private IAccountsService iAccountsService;
+
+   @Value("${build.version}")
+   private String buildVersion;
+
+   @Autowired
+   private Environment environment;
+
+   @Autowired
+   private AccountsContactInfoDto accountsContactInfoDto;
 
    @Operation(
            summary = "Create Account",
@@ -143,6 +161,82 @@ public class AccountsController {
         }
     }
 
+    @Operation(
+            summary = "Get Build Information",
+            description = "Get Build Information that is deployed into accounts ms"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )
+    })
+    @GetMapping("/build-info")
+    public ResponseEntity<String> getBuildInfo() {
+       return ResponseEntity.status(HttpStatus.OK).body(buildVersion);
+    }
+
+
+    @Operation(
+            summary = "Get Java Version",
+            description = "Get Java Version that is deployed into accounts ms"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )
+    })
+    @GetMapping("/java-version")
+    public ResponseEntity<Map<String, String>> getJavaVersion() {
+        Map<String, String> response = new HashMap<>();
+
+        response.put("java", environment.getProperty("JAVA_HOME", "Not Found"));
+        response.put("maven", environment.getProperty("MAVEN_HOME", "Not Found"));
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
+
+    @Operation(
+            summary = "Get Contact Info",
+            description = "Get Contact Info into accounts ms"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )
+    })
+    @GetMapping("/contact-info")
+    public ResponseEntity<AccountsContactInfoDto> getContactInfo() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(accountsContactInfoDto);
+    }
+
 
 
     private String formatMobileNumber(String mobileNumber) {
@@ -151,4 +245,5 @@ public class AccountsController {
         }
         return mobileNumber != null ? mobileNumber.trim() : null;
     }
+
 }

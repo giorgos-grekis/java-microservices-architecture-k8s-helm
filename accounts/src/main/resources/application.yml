@@ -17,3 +17,15 @@ spring:
     hibernate:
       ddl-auto: update # create the tables automatically
     show-sql: true # show the sql queries
+
+build:
+  version: "1.0"
+
+accounts:
+  message: "Welcome to accounts ms"
+  contactDetails:
+    name: "John Doe"
+    email: "john@test.com"
+  onCallSupport:
+    - (000) 666-4269
+    - (111) 999-6942
