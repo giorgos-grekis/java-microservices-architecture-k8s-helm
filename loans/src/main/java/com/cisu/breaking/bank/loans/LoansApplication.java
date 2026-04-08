@@ -1,17 +1,20 @@
 package com.cisu.breaking.bank.loans;
 
+import com.cisu.breaking.bank.loans.dto.LoansContactInfoDto;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.info.License;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication // main class spring-boot
 //@ComponentScan({ComponentScan("com.cisu.breaking.bank.loans.controller")})
 //@EnableJpaRepositories("com.cisu.breaking.bank.loans.repository")
 //@EntityScan("com.cisu.breaking.bank.loans.entity")
+@EnableConfigurationProperties(value = {LoansContactInfoDto.class})
 @EnableJpaAuditing(auditorAwareRef = "auditAwareImpl") // activate the JPA JpaAuditing and leverage the BEAN with the name auditAwareImpl to understand the  current auditor via  "getCurrentAuditor"
 @OpenAPIDefinition(
         info = @Info(

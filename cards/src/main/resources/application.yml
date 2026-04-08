@@ -14,3 +14,17 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  profiles:
+    active: "qa" # ["", "qa", "prod"]
+
+build:
+  version: "3.0"
+
+cards:
+  message: "Welcome to accounts ms DEV"
+  contactDetails:
+    name: "John Doe"
+    email: "john@test.com"
+  onCallSupport:
+    - (000) 666-4269
+    - (111) 999-6942

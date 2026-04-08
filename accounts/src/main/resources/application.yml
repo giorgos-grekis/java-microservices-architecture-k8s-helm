@@ -17,14 +17,8 @@ spring:
     hibernate:
       ddl-auto: update # create the tables automatically
     show-sql: true # show the sql queries
-  config:
-    import:
-      - "application_qa.yml"
-      - "application_prod.yml"
-    # activate a different profile
-    profiles:
-      active:
-        - "prod"
+  profiles:
+    active: "qa" # ["", "qa", "prod"]
 
 build:
   version: "3.0"
