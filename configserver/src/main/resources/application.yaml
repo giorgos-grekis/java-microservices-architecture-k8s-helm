@@ -1,0 +1,17 @@
+server:
+  port: 8071
+
+spring:
+  application:
+    name: configserver
+
+  # διαβάζει τοπικά αρχεία (Native Profile)
+  profiles:
+    active: native
+
+  # Git Repository
+#  cloud:
+#    config:
+#      server:
+#        git:
+#          uri: "https://github.com/{username}/repo-configs.git"
