@@ -8,6 +8,11 @@ spring:
   # διαβάζει τοπικά αρχεία (Native Profile)
   profiles:
     active: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: "classpath:/config"
 
   # Git Repository
 #  cloud:
