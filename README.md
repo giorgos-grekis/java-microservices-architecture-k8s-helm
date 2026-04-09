@@ -74,24 +74,28 @@ java -jar target/accounts-0.0.1-SNAPSHOT.jar
 
 Build via docker
 
-docker build . -t cisu2/account:001
+docker build . -t cisu2/account:002
+
+change the version also in docker-compose.yml
 
 docker inspect image {imageId}
 
 # Run the docker image with detached mode
-docker run -d -p 8080:8080 {imageId}
+`docker run -d -p 8080:8080 {imageId}`
 
 # Push image to docker hub
 
-docker image push docker.io/cisu2/account:001
+`docker image push docker.io/cisu2/account:001`
 
 # docker-compose
 
-create/start docker compose
-docker compose up -d
+## go to the right folder /docker-compose/default {prod, qa}
 
-start docker compose
-docker compose start
+### create/start docker compose
+`docker compose up -d`
+
+### start docker compose
+`docker compose start`
 
 ----
 
@@ -102,6 +106,23 @@ stop docker compose
 docker compose stop
 
 
+# run docker compose with force to build accounts again
+`docker compose up -d --build accounts`
+
+
+# Docker rabbitmq
+
+docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:4-management
+
+
+------------------------
+
+
+# List the TCP process bound to port 
+`fuser PORT/tcp`
+
+# kill a port
+`kill $(lsof -t -i:PORT)`
 -------------------------
 
 buildpacks
@@ -141,6 +162,8 @@ may be employed to translate requests from public endpoints to the internally po
 spring-cloud: https://docs.spring.io/spring-cloud-config/reference/index.html
 
 
+
+service for webhook:  https://hookdeck.com/pricing
+
 -----------------------------------------------
 
-https://github.com/eazybytes/microservices
