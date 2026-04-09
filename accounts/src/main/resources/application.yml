@@ -18,7 +18,7 @@ spring:
       ddl-auto: update # create the tables automatically
     show-sql: true # show the sql queries
   profiles:
-    active: "qa" # ["", "qa", "prod"]
+    active: "prod" # ["", "qa", "prod"]
   config:
     import: "optional:configserver:http://localhost:8071"
 
