@@ -25,8 +25,10 @@ services:
     depends_on:
       rabbit:
         condition: service_healthy
+#    healthcheck:
+#      test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit 1"
     healthcheck:
-      test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit 1"
+      test: "wget --no-verbose --tries=1 --spider http://localhost:8071/actuator/health/readiness || exit 1"
       interval: 10s # 3. run test command every  10 sec
       timeout: 5s # 4. fail the test if takes more than 5 sec
       retries: 10 # 2. if there is a failure try again for 10 times

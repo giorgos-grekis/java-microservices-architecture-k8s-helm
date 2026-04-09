@@ -9,6 +9,14 @@ RUN apk add --no-cache binutils
 # 2. Φτιάχνουμε το JAR μας
 COPY . /app
 WORKDIR /app
+
+# # DOCKER CACHE maven & pom.xml
+#COPY mvnw .
+#COPY .mvn .mvn
+#COPY pom.xml .
+#RUN #./mvnw dependency:go-offline
+#COPY src src
+
 RUN ./mvnw clean package -DskipTests
 
 # 3. Φτιάχνουμε το Custom JRE με τη σωστή σύνταξη της Java 25
@@ -25,6 +33,9 @@ RUN jlink \
 # ==========================================
 FROM alpine:3.21
 
+# Δημιουργία non-root χρήστη για ασφάλεια στο container
+RUN addgroup -S spring && adduser -S spring -G spring
+
 # Ορίζουμε πού θα μπει η Java μας
 ENV JAVA_HOME=/jre
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
@@ -34,5 +45,10 @@ COPY --from=build /customjre $JAVA_HOME
 
 # Αντιγράφουμε το JAR του microservice
 COPY --from=build /app/target/cards-0.0.1-SNAPSHOT.jar cards.jar
+
+# Αλλάζουμε στον ασφαλή χρήστη
+USER spring:spring
+
+EXPOSE 9000
 
 ENTRYPOINT ["java", "-jar", "cards.jar"]

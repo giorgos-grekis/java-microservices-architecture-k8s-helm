@@ -38,17 +38,19 @@ RUN ./mvnw clean package -DskipTests
 
 # 3. Φτιάχνουμε το Custom JRE με τη σωστή σύνταξη της Java 25
 RUN jlink \
-    --add-modules java.base,java.sql,java.naming,java.desktop,java.management,java.security.jgss,java.instrument,jdk.unsupported,java.compiler \
+    --add-modules java.base,java.sql,java.naming,java.desktop,java.management,java.security.jgss,java.instrument,jdk.unsupported,java.compiler,java.xml,java.net.http \
     --strip-debug \
     --no-man-pages \
     --no-header-files \
     --compress zip-6 \
     --output /customjre
-
 # ==========================================
 # Stage 2: Run
 # ==========================================
 FROM alpine:3.21
+
+# Δημιουργία non-root χρήστη για ασφάλεια
+RUN addgroup -S spring && adduser -S spring -G spring
 
 # Ορίζουμε πού θα μπει η Java μας
 ENV JAVA_HOME=/jre
@@ -59,5 +61,10 @@ COPY --from=build /customjre $JAVA_HOME
 
 # Αντιγράφουμε το JAR του microservice
 COPY --from=build /app/target/accounts-0.0.1-SNAPSHOT.jar accounts.jar
+
+# Ορίζουμε ότι από εδώ και πέρα το container τρέχει ως χρήστης 'spring'
+USER spring:spring
+
+EXPOSE 8080
 
 ENTRYPOINT ["java", "-jar", "accounts.jar"]
