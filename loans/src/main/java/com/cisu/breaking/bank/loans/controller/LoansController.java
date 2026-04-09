@@ -43,16 +43,12 @@ import java.util.Map;
 @Validated
 public class LoansController {
 
-    private ILoansService iLoansService;
+    private final ILoansService iLoansService;
+    private final Environment environment;
+    private final LoansContactInfoDto loansContactInfoDto;
 
     @Value("${build.version}")
     private String buildVersion;
-
-    @Autowired
-    private Environment environment;
-
-    @Autowired
-    private LoansContactInfoDto loansContactInfoDto;
 
     @Operation(
             summary = "Create Loan",

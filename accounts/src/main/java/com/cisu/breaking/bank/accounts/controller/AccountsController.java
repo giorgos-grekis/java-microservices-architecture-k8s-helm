@@ -38,17 +38,14 @@ import java.util.Map;
 @Validated
 public class AccountsController {
 
-
-   private IAccountsService iAccountsService;
+    private final IAccountsService iAccountsService;
+    private final Environment environment;
+    private final AccountsContactInfoDto accountsContactInfoDto;
 
    @Value("${build.version}")
    private String buildVersion;
 
-   @Autowired
-   private Environment environment;
 
-   @Autowired
-   private AccountsContactInfoDto accountsContactInfoDto;
 
    @Operation(
            summary = "Create Account",

@@ -40,16 +40,13 @@ import java.util.Map;
 @Validated
 public class CardsController {
 
-    private ICardsService iCardsService;
+    private final ICardsService iCardsService;
+    private final Environment environment;
+    private final CardsContactInfoDto cardsContactInfoDto;
 
     @Value("${build.version}")
     private String buildVersion;
 
-    @Autowired
-    private Environment environment;
-
-    @Autowired
-    private CardsContactInfoDto cardsContactInfoDto;
 
     @Operation(
             summary = "Create Card",
