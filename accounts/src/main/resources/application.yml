@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: accounts
+    name: accounts # same name with configserver resources
   datasource:
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
@@ -19,15 +19,19 @@ spring:
     show-sql: true # show the sql queries
   profiles:
     active: "qa" # ["", "qa", "prod"]
+  config:
+    import: "optional:configserver:http://localhost:8071"
 
-build:
-  version: "3.0"
 
-accounts:
-  message: "Welcome to accounts ms DEV"
-  contactDetails:
-    name: "John Doe"
-    email: "john@test.com"
-  onCallSupport:
-    - (000) 666-4269
-    - (111) 999-6942
+#
+#build:
+#  version: "3.0"
+#
+#accounts:
+#  message: "Welcome to accounts ms DEV"
+#  contactDetails:
+#    name: "John Doe"
+#    email: "john@test.com"
+#  onCallSupport:
+#    - (000) 666-4269
+#    - (111) 999-6942

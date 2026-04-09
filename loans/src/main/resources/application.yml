@@ -1,6 +1,8 @@
 server:
   port: 8090
 spring:
+  application:
+    name: loans # same name with configserver resources
   datasource:
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
@@ -15,16 +17,19 @@ spring:
       ddl-auto: update
     show-sql: true
   profiles:
-    active: "qa" # ["", "qa", "prod"]
+    active: "default" # ["" || "default", "qa", "prod"]
+  config:
+    import: "optional:configserver:http://localhost:8071"
 
-build:
-  version: "3.0"
 
-loans:
-  message: "Welcome to accounts ms DEV"
-  contactDetails:
-    name: "John Doe"
-    email: "john@test.com"
-  onCallSupport:
-    - (000) 666-4269
-    - (111) 999-6942
+#build:
+#  version: "3.0"
+#
+#loans:
+#  message: "Welcome to accounts ms DEV"
+#  contactDetails:
+#    name: "John Doe"
+#    email: "john@test.com"
+#  onCallSupport:
+#    - (000) 666-4269
+#    - (111) 999-6942
