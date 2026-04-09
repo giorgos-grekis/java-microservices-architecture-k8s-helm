@@ -54,7 +54,15 @@
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
+
+        <!-- Spring Cloud Bus rabbitmq  -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bus-amqp</artifactId>
+        </dependency>
 	</dependencies>
+
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>

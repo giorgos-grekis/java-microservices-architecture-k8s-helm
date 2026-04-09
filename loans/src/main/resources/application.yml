@@ -20,6 +20,18 @@ spring:
     active: "default" # ["" || "default", "qa", "prod"]
   config:
     import: "optional:configserver:http://localhost:8071"
+  rabbitmq:
+    host: "localhost"
+    port: 5672 # or 15672
+    username: "guest"
+    password: "guest"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*" # enable and expose all management endpoint supported by the spring boot actuator
+
 
 
 #build:

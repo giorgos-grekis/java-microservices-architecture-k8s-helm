@@ -1,18 +1,29 @@
 server:
   port: 8071
 
+encrypt:
+  key: "YopJrhs6d9Wx7iQopoQr"
+
 spring:
   application:
     name: configserver
-
-  # διαβάζει τοπικά αρχεία (Native Profile)
   profiles:
-    active: native
+    active: git
+#
+  #    active: native   # διαβάζει τοπικά αρχεία (Native Profile)
   cloud:
     config:
       server:
-        native:
-          search-locations: "classpath:/config"
+        git:
+          uri: "https://github.com/giorgos-grekis/java-microservices-architecture-k8s-helm-config.git"
+          default-label: "main"
+          timeout: 5 # wait for 5 seconds
+          clone-on-start: true
+          force-pull: true # overwrite all local changes
+        #        native:
+          # search-locations: "classpath:/config"
+          # Reading configurations from a file system location
+#          search-locations: "file:///home/***/**/configserver/src/main/resources/config/"
 
   # Git Repository
 #  cloud:
