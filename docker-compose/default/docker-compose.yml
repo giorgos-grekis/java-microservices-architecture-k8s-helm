@@ -11,11 +11,11 @@ services:
       timeout: 5s
       retries: 10
       start_period: 5s
-    networks:
-      - cisu2network
-#    extends:
-#      file: common-config.yml
-#      service: network-deploy-service
+#    networks:
+#      - cisu2network
+    extends:
+      file: common-config.yml # file name
+      service: network-deploy-service # service to import from the file
 
   configserver:
     image: "cisu2/configserver:002"
@@ -31,12 +31,16 @@ services:
       timeout: 5s # 4. fail the test if takes more than 5 sec
       retries: 10 # 2. if there is a failure try again for 10 times
       start_period: 5s # 1. start the test after 5 sec
-    deploy:
-      resources:
-        limits:
-          memory: 700m # max 700mb memory
-    networks:
-      - cisu2network
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 700m # max 700mb memory
+#    networks:
+#      - cisu2network
+    extends:
+      file: common-config.yml # file name
+      service: microservice-base-config # service to import from the file
+
 
   accounts:
     image: "cisu2/account:002"
@@ -46,16 +50,19 @@ services:
     depends_on:
       configserver:
         condition: service_healthy # service_completed_successfully
-    deploy:
-      resources:
-        limits:
-          memory: 700m # max 700mb memory
-    networks:
-      - cisu2network
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 700m # max 700mb memory
+#    networks:
+#      - cisu2network
     environment:
-      SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
-      SPRING_PROFILES_ACTIVE: "default"
+#      SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
+#      SPRING_PROFILES_ACTIVE: "default"
       SPRING_APPLICATION_NAME: "accounts"
+    extends:
+      file: common-config.yml # file name
+      service: microservice-configserver-config # service to import from the file
 
   loans:
     image: "cisu2/loans:002"
@@ -65,16 +72,19 @@ services:
     depends_on:
       configserver:
         condition: service_healthy # service_completed_successfully
-    deploy:
-      resources:
-        limits:
-          memory: 700m
-    networks:
-      - cisu2network # tag all ms under the same network
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 700m
+#    networks:
+#      - cisu2network # tag all ms under the same network
     environment:
-      SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
-      SPRING_PROFILES_ACTIVE: "default"
+#      SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
+#      SPRING_PROFILES_ACTIVE: "default"
       SPRING_APPLICATION_NAME: "loans"
+    extends:
+      file: common-config.yml # file name
+      service: microservice-configserver-config # service to import from the file
 
   cards:
     image: "cisu2/cards:002"
@@ -84,16 +94,19 @@ services:
     depends_on:
       configserver:
         condition: service_healthy # service_completed_successfully
-    deploy:
-      resources:
-        limits:
-          memory: 700m
-    networks:
-      - cisu2network
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 700m
+#    networks:
+#      - cisu2network
     environment:
-      SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
-      SPRING_PROFILES_ACTIVE: "default"
+#      SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
+#      SPRING_PROFILES_ACTIVE: "default"
       SPRING_APPLICATION_NAME: "cards"
+    extends:
+      file: common-config.yml # file name
+      service: microservice-configserver-config # service to import from the file
 
 # create a network with the name of "cisu2network" and drive of "bridge"
 networks:
