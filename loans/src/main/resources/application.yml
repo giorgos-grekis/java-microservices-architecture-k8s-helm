@@ -7,9 +7,10 @@ spring:
     url: jdbc:postgresql://localhost:5433/loansdb
     username: 'postgres'
     password: 'root'
-  sql:
-    init:
-      mode: always
+  ## TODO: enable this after development
+#  sql:
+#    init:
+#      mode: always
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
@@ -31,3 +32,25 @@ management:
     web:
       exposure:
         include: "*" # enable and expose all management endpoint supported by the spring boot actuator
+  endpoint:
+    shutdown:
+      enabled: true # shutdown the loans ms
+  info:
+    env:
+      enabled: true # enabled env related information
+
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetchRegistry: true # loans ms will try to fetch the registry details whenever it's trying to connect with other microservices.
+    registerWithEureka: true # loans ms will be registered with the Eureka server.
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/
+
+info:
+  app:
+    name: "Loans"
+    description: "Loans Application"
+    version: "1.0.0"
