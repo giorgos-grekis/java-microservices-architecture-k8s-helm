@@ -1,12 +1,15 @@
-package com.cisu.breaking.bank.cards.dto;
+package com.cisu.breaking.bank.accounts.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.*;
+import lombok.Data;
 
+/**
+ * TODO: move into commons
+ */
 @Schema(name = "Cards",
         description = "Schema to hold Card information"
 )

@@ -1,0 +1,18 @@
+package com.cisu.breaking.bank.accounts.service.client;
+
+import com.cisu.breaking.bank.accounts.dto.CardsDto;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+/**
+ * Help accounts ms to connect with cards ms
+ */
+@FeignClient("cards")
+public interface CardFeignClient {
+
+    @GetMapping(value = "/api/v1/fetch", consumes = "application/json")
+    public ResponseEntity<CardsDto> fetchCardDetails(@RequestParam String mobileNumber);
+
+}

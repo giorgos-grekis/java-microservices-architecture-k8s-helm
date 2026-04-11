@@ -8,12 +8,11 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Schema(
-        name = "Customer",
-        description = "Schema to hold Customer and Account information"
+        name = "CustomerDetails",
+        description = "Schema to hold Customer, Account Cards and Loans information"
 )
 @Data
-public class CustomerDto {
-
+public class CustomerDetailsDto {
     @Schema(
             description = "Name of the customer",
             example = "John Doe"
@@ -42,4 +41,14 @@ public class CustomerDto {
             description = "Accounts details of the Customer"
     )
     private AccountsDto accountsDto;
+
+    @Schema(
+            description = "Cards details of the Customer"
+    )
+    private CardsDto cardsDto;
+
+    @Schema(
+            description = "Loans details of the Customer"
+    )
+    private LoansDto loansDto;
 }

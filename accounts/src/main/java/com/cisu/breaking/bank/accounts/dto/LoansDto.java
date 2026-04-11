@@ -1,12 +1,15 @@
-package com.cisu.breaking.bank.loans.dto;
+package com.cisu.breaking.bank.accounts.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.*;
+import lombok.Data;
 
+/**
+ * TODO: move into commons
+ */
 @Schema(name = "Loans",
         description = "Schema to hold Loan information"
 )

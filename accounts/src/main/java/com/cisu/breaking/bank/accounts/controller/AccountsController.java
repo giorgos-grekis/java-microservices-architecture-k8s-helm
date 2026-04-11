@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -81,8 +80,8 @@ public class AccountsController {
    public ResponseEntity<CustomerDto> fetchAccountDetails(
            @Valid @RequestParam String mobileNumber
    ) {
-       String formattedNumber = formatMobileNumber(mobileNumber);
-       CustomerDto customerDto = iAccountsService.fetchAccount(formattedNumber);
+//       String formattedNumber = formatMobileNumber(mobileNumber);
+       CustomerDto customerDto = iAccountsService.fetchAccount(mobileNumber);
        return ResponseEntity.status(HttpStatus.OK).body(customerDto);
    }
 
@@ -235,7 +234,7 @@ public class AccountsController {
     }
 
 
-
+    // TODO: move into commons
     private String formatMobileNumber(String mobileNumber) {
         if (mobileNumber != null && mobileNumber.startsWith(" ")) {
             mobileNumber = mobileNumber.replaceFirst(" ", "+");

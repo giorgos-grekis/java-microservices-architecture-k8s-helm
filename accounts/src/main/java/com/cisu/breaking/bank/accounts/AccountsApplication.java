@@ -8,9 +8,11 @@ import io.swagger.v3.oas.annotations.info.License;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication // main class spring-boot
+@EnableFeignClients
 //@ComponentScan({ComponentScan("com.cisu.breaking.bank.accounts.controller")})
 //@EnableJpaRepositories("com.cisu.breaking.bank.accounts.repository")
 //@EntityScan("com.cisu.breaking.bank.accounts.entity")
