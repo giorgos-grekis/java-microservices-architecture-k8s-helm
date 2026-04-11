@@ -1,4 +1,4 @@
-# Breaking.Bank 🏦💎
+# Breaking.Bank 🏦
 
 Welcome to **Breaking.Bank**, a microservices-based banking application built with Spring Boot. This project explores modern financial architecture with a touch of "Heisenberg" wit.
 
@@ -11,7 +11,7 @@ Breaking.Bank is designed as a scalable system composed of specialized microserv
 
 The **Account MS** is the heart of the system, responsible for managing customer accounts, balances, and core banking entities.
 
-### 🛠 Tech Stack & Dependencies
+###  Tech Stack & Dependencies
 This service leverages the following Spring Boot ecosystem components:
 
 * **Spring Web**: Builds RESTful APIs and uses Apache Tomcat as the default embedded container.
@@ -22,7 +22,7 @@ This service leverages the following Spring Boot ecosystem components:
 * **Lombok**: Reduces boilerplate code (Getters, Setters, Constructors) for cleaner Java classes.
 * **Validation**: Ensures data integrity using Bean Validation (JSR-380) constraints.
 
-### 🚀 Getting Started
+###  Getting Started
 
 
 Data Transfer Object: https://martinfowler.com/eaaCatalog/dataTransferObject.html
@@ -74,7 +74,7 @@ java -jar target/accounts-0.0.1-SNAPSHOT.jar
 
 Build via docker
 
-docker build . -t cisu2/account:002
+docker build . -t cisu2/account:003
 
 change the version also in docker-compose.yml
 
@@ -89,6 +89,14 @@ docker inspect image {imageId}
 
 # docker-compose
 
+before you run docker-compose up we need to build all images separete like
+docker build . -t cisu2/account:001
+docker build . -t cisu2/loans:001
+docker build . -t cisu2/cards:001
+
+docker build . -t cisu2/configserver:001
+docker build . -t cisu2/eureka:001
+
 ## go to the right folder /docker-compose/default {prod, qa}
 
 ### create/start docker compose
@@ -96,6 +104,10 @@ docker inspect image {imageId}
 
 ### start docker compose
 `docker compose start`
+
+
+## see all the docker networks
+`docker network ls`
 
 ----
 
@@ -159,11 +171,29 @@ may be employed to translate requests from public endpoints to the internally po
 
 -----------------------------------------------
 
+Service Registration: Client applications register themselves with the service registry
+upon startup. They provide essential information about their location, such as IP
+address, port, and metadata which helps identify and categorize the service.
+
+Service Discovery: When a client application needs to communicate with a specific service,
+it queries the service registry for available instances of that service. The registry 
+responds with the necessary information, such as IP addresses and connection details.
+
+Load Balancing: Client-side service discovery often involves load balancing to distribute
+the workload across multiple service instances. The client application can implement a 
+load-balancing strategy to select a specific instance based on factors like round-robin,
+weighted distribution, or latency.
+
+
+-----------------------------------------------
+
 spring-cloud: https://docs.spring.io/spring-cloud-config/reference/index.html
 
 
 
 service for webhook:  https://hookdeck.com/pricing
+
+https://microservices.io/
 
 -----------------------------------------------
 

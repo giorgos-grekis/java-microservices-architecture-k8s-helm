@@ -75,7 +75,7 @@ services:
       service: microservice-db-config # service to import from the file
 
   configserver:
-    image: "cisu2/configserver:003"
+    image: "cisu2/configserver:004"
     container_name: configserver-ms
     ports:
       - "8071:8071"
@@ -101,8 +101,26 @@ services:
       service: microservice-base-config # service to import from the file
 
 
+  eurekaserver:
+    image: "cisu2/eurekaserver:004"
+    container_name: eurekaserver-ms
+    ports:
+      - "8070:8070"
+    healthcheck:
+      test: "wget --no-verbose --tries=1 --spider http://localhost:8070/actuator/health/readiness || exit 1"
+      interval: 10s # 3. run test command every  10 sec
+      timeout: 5s # 4. fail the test if takes more than 5 sec
+      retries: 10 # 2. if there is a failure try again for 10 times
+      start_period: 5s # 1. start the test after 5 sec
+    extends:
+      file: common-config.yml # file name
+      service: microservice-configserver-config # service to import from the file
+    environment:
+      SPRING_APPLICATION_NAME: "eurekaserver" # same name as application.yml from eurekaserver
+
+
   accounts:
-    image: "cisu2/account:003"
+    image: "cisu2/account:004"
     container_name: accounts-ms
     ports:
       - "8080:8080"
@@ -125,10 +143,10 @@ services:
 
     extends:
       file: common-config.yml # file name
-      service: microservice-configserver-config # service to import from the file
+      service: microservice-eureka-config # service to import from the file
 
   loans:
-    image: "cisu2/loans:003"
+    image: "cisu2/loans:004"
     container_name: loans-ms
     ports:
       - "8090:8090"
@@ -150,10 +168,10 @@ services:
       SPRING_DATASOURCE_URL: "jdbc:postgresql://loansdb:5432/loansdb"
     extends:
       file: common-config.yml # file name
-      service: microservice-configserver-config # service to import from the file
+      service: microservice-eureka-config # service to import from the file
 
   cards:
-    image: "cisu2/cards:003"
+    image: "cisu2/cards:004"
     container_name: cards-ms
     ports:
       - "9000:9000"
@@ -175,7 +193,7 @@ services:
       SPRING_DATASOURCE_URL: "jdbc:postgresql://cardsdb:5432/cardsdb"
     extends:
       file: common-config.yml # file name
-      service: microservice-configserver-config # service to import from the file
+      service: microservice-eureka-config # service to import from the file
 
 # create a network with the name of "cisu2network" and drive of "bridge"
 networks:

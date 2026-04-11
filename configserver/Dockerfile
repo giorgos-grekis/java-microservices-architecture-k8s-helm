@@ -20,7 +20,7 @@ RUN ./mvnw clean package -DskipTests
 # Φτιάχνουμε το Custom JRE
 # ΠΡΟΣΟΧΗ: Προστέθηκαν τα jdk.crypto.ec και jdk.charsets για το Git και το encrypt.key
 RUN jlink \
-    --add-modules java.base,java.sql,java.naming,java.desktop,java.management,java.security.jgss,java.instrument,jdk.unsupported,java.compiler,java.xml,java.net.http,jdk.crypto.ec,jdk.charsets \
+    --add-modules java.base,java.sql,java.naming,java.desktop,java.management,java.security.jgss,java.instrument,jdk.unsupported,java.compiler,java.xml,java.net.http,jdk.crypto.ec,jdk.charsets,jdk.naming.dns,jdk.naming.rmi \
     --strip-debug \
     --no-man-pages \
     --no-header-files \

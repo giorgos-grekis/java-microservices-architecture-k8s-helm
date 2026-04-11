@@ -38,7 +38,7 @@ RUN ./mvnw clean package -DskipTests
 
 # 3. Φτιάχνουμε το Custom JRE με τη σωστή σύνταξη της Java 25
 RUN jlink \
-    --add-modules java.base,java.sql,java.naming,java.desktop,java.management,java.security.jgss,java.instrument,jdk.unsupported,java.compiler,java.xml,java.net.http \
+    --add-modules java.base,java.sql,java.naming,java.desktop,java.management,java.security.jgss,java.instrument,jdk.unsupported,java.compiler,java.xml,java.net.http,jdk.crypto.ec,jdk.charsets,jdk.naming.dns,jdk.naming.rmi \
     --strip-debug \
     --no-man-pages \
     --no-header-files \
