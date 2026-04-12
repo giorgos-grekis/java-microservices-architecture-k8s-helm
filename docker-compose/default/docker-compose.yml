@@ -124,6 +124,12 @@ services:
     container_name: accounts-ms
     ports:
       - "8080:8080"
+    healthcheck:
+      test: "wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health/readiness || exit 1"
+      interval: 10s # 3. run test command every  10 sec
+      timeout: 5s # 4. fail the test if takes more than 5 sec
+      retries: 10 # 2. if there is a failure try again for 10 times
+      start_period: 5s # 1. start the test after 5 sec
     depends_on:
       configserver:
         condition: service_healthy # service_completed_successfully
@@ -150,6 +156,12 @@ services:
     container_name: loans-ms
     ports:
       - "8090:8090"
+    healthcheck:
+      test: "wget --no-verbose --tries=1 --spider http://localhost:8090/actuator/health/readiness || exit 1"
+      interval: 10s # 3. run test command every  10 sec
+      timeout: 5s # 4. fail the test if takes more than 5 sec
+      retries: 10 # 2. if there is a failure try again for 10 times
+      start_period: 5s # 1. start the test after 5 sec
     depends_on:
       configserver:
         condition: service_healthy # service_completed_successfully
@@ -175,6 +187,12 @@ services:
     container_name: cards-ms
     ports:
       - "9000:9000"
+    healthcheck:
+      test: "wget --no-verbose --tries=1 --spider http://localhost:9000/actuator/health/readiness || exit 1"
+      interval: 10s # 3. run test command every  10 sec
+      timeout: 5s # 4. fail the test if takes more than 5 sec
+      retries: 10 # 2. if there is a failure try again for 10 times
+      start_period: 5s # 1. start the test after 5 sec
     depends_on:
       configserver:
         condition: service_healthy # service_completed_successfully
@@ -191,6 +209,25 @@ services:
 #      SPRING_PROFILES_ACTIVE: "default"
       SPRING_APPLICATION_NAME: "cards"
       SPRING_DATASOURCE_URL: "jdbc:postgresql://cardsdb:5432/cardsdb"
+    extends:
+      file: common-config.yml # file name
+      service: microservice-eureka-config # service to import from the file
+
+
+  gatewayserver:
+    image: "cisu2/gatewayserver:004"
+    container_name: gatewayserver-ms
+    ports:
+      - "8072:8072"
+    depends_on:
+      accounts:
+        condition: service_healthy # service_completed_successfully
+      loans:
+        condition: service_healthy # service_completed_successfully
+      cards:
+        condition: service_healthy # service_completed_successfully
+    environment:
+      SPRING_APPLICATION_NAME: "gatewayserver"
     extends:
       file: common-config.yml # file name
       service: microservice-eureka-config # service to import from the file

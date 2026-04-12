@@ -31,6 +31,11 @@ spring:
     password: "guest"
 
 management:
+  health:
+    readiness-state:
+      enabled: true
+    liveness-state:
+      enabled: true
   endpoints:
     web:
       exposure:
@@ -41,6 +46,9 @@ management:
     info:
       env:
         enabled: true # enabled env related information
+    health:
+      probes:
+        enabled: true
 
 #endpoints:
 #  shutdown:

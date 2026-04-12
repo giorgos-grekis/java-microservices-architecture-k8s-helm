@@ -1,17 +1,21 @@
-
 spring:
   application:
     name: "gatewayserver"
   config:
     import: "optional:configserver:http://localhost:8071/"
+#  cloud:
+#    gateway:
+#      server:
+#        webflux:
+#          discovery:
+#            locator:
+#              enabled: false
+#              lowerCaseServiceId: true
   cloud:
     gateway:
-      server:
-        webflux:
-          discovery:
-            locator:
-              enabled: false
-              lowerCaseServiceId: true
+      discovery:
+        locator:
+          enabled: false
 
 management:
   endpoints:
@@ -31,12 +35,14 @@ info:
     description: "Gateway Server Application"
     version: "1.0.0"
 
-
-
 logging:
   level:
+#    com:
+#      eazybytes:
+#        gatewayserver: DEBUG
     com:
       cisu:
         breaking:
           bank:
             gatewayserver: DEBUG
+

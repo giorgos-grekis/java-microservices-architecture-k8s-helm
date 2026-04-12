@@ -29,6 +29,11 @@ spring:
     password: "guest"
 
 management:
+  health:
+    readiness-state:
+      enabled: true
+    liveness-state:
+      enabled: true
   endpoints:
     web:
       exposure:
@@ -36,9 +41,13 @@ management:
   endpoint:
     shutdown:
       enabled: true # shutdown the cards ms
-  info:
-    env:
-      enabled: true # enabled env related information
+    health:
+      probes:
+        enabled: true
+    info:
+      env:
+        enabled: true # enabled env related information
+
 
 eureka:
   instance:
