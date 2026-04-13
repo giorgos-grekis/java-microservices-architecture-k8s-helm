@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * Help accounts ms to connect with cards ms
  */
-@FeignClient("cards")
+@FeignClient(name = "cards", fallback = CardFeignClient.class)
 public interface CardFeignClient {
 
     @GetMapping(value = "/api/v1/fetch", consumes = "application/json")
@@ -19,3 +19,4 @@ public interface CardFeignClient {
             @RequestParam String mobileNumber);
 
 }
+

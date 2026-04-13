@@ -62,3 +62,11 @@ info:
     name: "Loans"
     description: "Loans Application"
     version: "1.0.0"
+
+logging:
+  level:
+    com:
+      cisu:
+        breaking:
+          bank:
+            loans: DEBUG
