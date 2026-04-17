@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * Help accounts ms to connect with cards ms
  */
-@FeignClient(name = "cards", fallback = CardFeignClient.class)
-public interface CardFeignClient {
+@FeignClient(name = "cards", fallback = CardsFallback.class)
+public interface CardsFeignClient {
 
     @GetMapping(value = "/api/v1/fetch", consumes = "application/json")
     public ResponseEntity<CardsDto> fetchCardDetails(

@@ -10,12 +10,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * Help accounts ms to connect with loans ms
  */
-@FeignClient("loans")
+//@FeignClient(name = "loans", fallback = LoansFallback.class)
+//public interface LoansFeignClient {
+//
+//    @GetMapping(value = "/api/v1/fetch", consumes = "application/json")
+//    public ResponseEntity<LoansDto> fetchLoanDetails(
+//            @RequestHeader("breaking-bank-correlation-id") String correlationId,
+//            @RequestParam String mobileNumber);
+//
+//}
+
+@FeignClient(name="loans",fallback = LoansFallback.class)
 public interface LoansFeignClient {
 
-    @GetMapping(value = "/api/v1/fetch", consumes = "application/json")
-    public ResponseEntity<LoansDto> fetchLoanDetails(
-            @RequestHeader("breaking-bank-correlation-id") String correlationId,
-            @RequestParam String mobileNumber);
+    @GetMapping(value = "/api/v1/fetch",consumes = "application/json")
+    public ResponseEntity<LoansDto> fetchLoanDetails(@RequestHeader("breaking-bank-correlation-id")
+                                                     String correlationId, @RequestParam String mobileNumber);
 
 }

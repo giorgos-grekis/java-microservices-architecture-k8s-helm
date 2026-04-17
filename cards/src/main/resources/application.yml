@@ -63,3 +63,11 @@ info:
     name: "Cards"
     description: "Cards Application"
     version: "1.0.0"
+
+logging:
+  level:
+    com:
+      cisu:
+        breaking:
+          bank:
+            cards: DEBUG

@@ -87,6 +87,9 @@ docker inspect image {imageId}
 
 `docker image push docker.io/cisu2/account:001`
 
+# redis
+docker run -p 6379:6379 --name breakingBankRedis -d redis:8.6.2-alpine
+
 # docker-compose
 
 before you run docker-compose up we need to build all images separete like
@@ -127,6 +130,22 @@ docker compose stop
 docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:4-management
 
 
+# KeyCloak
+
+`docker run -d -p 127.0.0.1:7080:8080 -e KC_BOOTSTRAP_ADMIN_USERNAME=admin -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin quay.io/keycloak/keycloak:26.6.1 start-dev`
+
+Client ID: breaking-bank-callcenter-cc
+
+// KeyCloak endpoints
+http://localhost:7080/realms/master/.well-known/openid-configuration
+
+// KeyCloak endpoint token
+http://localhost:7080/realms/master/protocol/openid-connect/token
+
+
+Client ID    : breaking-bank-callcenter-cc   
+Client Secret: KNoKhp9U7ITIq9U9288oMFIwTGv7aiCZ
+
 ------------------------
 
 
@@ -147,6 +166,7 @@ mvn spring-boot:build-image
 Google Jib
 url: https://github.com/GoogleContainerTools/jib
 
+mvn compile jib:build
 mvn compile jib:build
 
 
@@ -197,3 +217,7 @@ https://microservices.io/
 
 -----------------------------------------------
 
+ubiq
+
+sudo apt update
+sudo apt install -y apache2-utils

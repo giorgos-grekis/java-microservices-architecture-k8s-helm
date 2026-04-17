@@ -12,7 +12,7 @@ import com.cisu.breaking.bank.accounts.mapper.CustomerMapper;
 import com.cisu.breaking.bank.accounts.repository.AccountsRepository;
 import com.cisu.breaking.bank.accounts.repository.CustomerRepository;
 import com.cisu.breaking.bank.accounts.service.ICustomerService;
-import com.cisu.breaking.bank.accounts.service.client.CardFeignClient;
+import com.cisu.breaking.bank.accounts.service.client.CardsFeignClient;
 import com.cisu.breaking.bank.accounts.service.client.LoansFeignClient;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,7 @@ public class CustomerServiceImpl implements ICustomerService {
 
     private AccountsRepository accountsRepository;
     private CustomerRepository customerRepository;
-    private CardFeignClient cardsFeignClient;
+    private CardsFeignClient cardsFeignClient;
     private LoansFeignClient loansFeignClient;
 
     /**
@@ -61,14 +61,19 @@ public class CustomerServiceImpl implements ICustomerService {
          * and it will perform some load balancing and invoke the actual microservices
          */
         ResponseEntity<LoansDto> loansDtoResponseEntity = loansFeignClient.fetchLoanDetails(correlationId, mobileNumber);
-        customerDetailsDto.setLoansDto(loansDtoResponseEntity.getBody());
+        if (null != loansDtoResponseEntity) {
+            customerDetailsDto.setLoansDto(loansDtoResponseEntity.getBody());
+        }
+
 
         /**
          * Connect with Eureka server and try to get cards instance details
          * and it will perform some load balancing and invoke the actual microservices
          */
         ResponseEntity<CardsDto> cardsDtoResponseEntity = cardsFeignClient.fetchCardDetails(correlationId, mobileNumber);
-        customerDetailsDto.setCardsDto(cardsDtoResponseEntity.getBody());
+        if (null != cardsDtoResponseEntity) {
+            customerDetailsDto.setCardsDto(cardsDtoResponseEntity.getBody());
+        }
 
         return customerDetailsDto;
     }

@@ -6,6 +6,8 @@ import com.cisu.breaking.bank.accounts.dto.CustomerDto;
 import com.cisu.breaking.bank.accounts.dto.ErrorResponseDto;
 import com.cisu.breaking.bank.accounts.dto.ResponseDto;
 import com.cisu.breaking.bank.accounts.service.IAccountsService;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,6 +16,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -36,6 +40,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Validated
 public class AccountsController {
+
+    private static final Logger logger = LoggerFactory.getLogger(AccountsController.class);
 
     private final IAccountsService iAccountsService;
     private final Environment environment;
@@ -174,9 +180,21 @@ public class AccountsController {
                     )
             )
     })
+
+    @Retry(name = "getBuildInfo", fallbackMethod = "getBuildInfoFallback")
     @GetMapping("/build-info")
     public ResponseEntity<String> getBuildInfo() {
-       return ResponseEntity.status(HttpStatus.OK).body(buildVersion);
+       logger.debug("getBuildInfo method Invoked");
+       return ResponseEntity
+               .status(HttpStatus.OK)
+               .body(buildVersion);
+    }
+
+    public ResponseEntity<String> getBuildInfoFallback(Throwable throwable) {
+        logger.debug("getBuildInfoFallback method Invoked");
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("getBuildInfoFallback");
     }
 
 
@@ -197,12 +215,25 @@ public class AccountsController {
                     )
             )
     })
+
+    @RateLimiter(name = "getJavaVersion", fallbackMethod = "getJavaVersionFallback")
     @GetMapping("/java-version")
     public ResponseEntity<Map<String, String>> getJavaVersion() {
         Map<String, String> response = new HashMap<>();
 
         response.put("java", environment.getProperty("JAVA_HOME", "Not Found"));
         response.put("maven", environment.getProperty("MAVEN_HOME", "Not Found"));
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
+
+    public ResponseEntity<Map<String, String>> getJavaVersionFallback(Throwable throwable) {
+        Map<String, String> response = new HashMap<>();
+
+        response.put("java", "java 25");
+        response.put("maven", "maven **");
 
         return ResponseEntity
                 .status(HttpStatus.OK)
