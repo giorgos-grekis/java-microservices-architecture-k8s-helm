@@ -3,26 +3,21 @@ package com.cisu.breaking.bank.accounts.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-
-@Getter
-@Setter
-@ToString
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
-@Table(name = "accounts")
-public class Accounts extends BaseEntity {
+@Getter @Setter @ToString @AllArgsConstructor @NoArgsConstructor
+public class Accounts extends  BaseEntity {
 
-    @Id
-    @Column(name = "account_number")
-    private Long accountNumber;
-
-    @Column(name = "customer_id")
+    @Column(name="customer_id")
     private Long customerId;
 
-    @Column(name = "account_type")
+    @Column(name="account_number")
+    @Id
+    private Long accountNumber;
+
+    @Column(name="account_type")
     private String accountType;
 
-    @Column(name = "branch_address")
+    @Column(name="branch_address")
     private String branchAddress;
+
 }

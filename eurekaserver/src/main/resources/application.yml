@@ -2,14 +2,13 @@ spring:
   application:
     name: "eurekaserver"
   config:
-    import: "optional:configserver:http://localhost:8071"
-
+    import: "optional:configserver:http://localhost:8071/"
 
 management:
   endpoints:
     web:
       exposure:
-        include: "*" # enable and expose all management endpoint supported by the spring boot actuator
+        include: "*"
   health:
     readiness-state:
       enabled: true
@@ -19,3 +18,10 @@ management:
     health:
       probes:
         enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"

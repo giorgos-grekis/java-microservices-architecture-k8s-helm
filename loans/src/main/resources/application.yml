@@ -2,65 +2,62 @@ server:
   port: 8090
 spring:
   application:
-    name: loans # same name with configserver resources
+    name: "loans"
+  profiles:
+    active: "prod"
   datasource:
-    url: jdbc:postgresql://localhost:5433/loansdb
-    username: 'postgres'
-    password: 'root'
-  ## TODO: enable this after development
-  sql:
-    init:
-      mode: always
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: ''
+  h2:
+    console:
+      enabled: true
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: update
     show-sql: true
-
-  profiles:
-    active: "default" # ["" || "default", "qa", "prod"]
   config:
-    import: "optional:configserver:http://localhost:8071"
-  rabbitmq:
-    host: "localhost"
-    port: 5672 # or 15672
-    username: "guest"
-    password: "guest"
+    import: "optional:configserver:http://localhost:8071/"
 
 management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
   health:
     readiness-state:
       enabled: true
     liveness-state:
       enabled: true
-  endpoints:
-    web:
-      exposure:
-        include: "*" # enable and expose all management endpoint supported by the spring boot actuator
   endpoint:
     shutdown:
-      enabled: true # shutdown the loans ms
-    info:
-      env:
-        enabled: true # enabled env related information
+      access: unrestricted
     health:
       probes:
         enabled: true
+  info:
+    env:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
 
 
 eureka:
   instance:
-    prefer-ip-address: true
+    preferIpAddress: true
   client:
-    fetchRegistry: true # loans ms will try to fetch the registry details whenever it's trying to connect with other microservices.
-    registerWithEureka: true # loans ms will be registered with the Eureka server.
+    fetchRegistry: true
+    registerWithEureka: true
     serviceUrl:
       defaultZone: http://localhost:8070/eureka/
 
 info:
   app:
-    name: "Loans"
-    description: "Loans Application"
+    name: "loans"
+    description: "Breaking Bank Loans Application"
     version: "1.0.0"
 
 logging:
@@ -68,5 +65,7 @@ logging:
     com:
       cisu:
         breaking:
-          bank:
-            loans: DEBUG
+          loans: DEBUG
+
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"

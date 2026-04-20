@@ -11,31 +11,31 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-@SpringBootApplication // main class spring-boot
-//@ComponentScan({ComponentScan("com.cisu.breaking.bank.cards.controller")})
-//@EnableJpaRepositories("com.cisu.breaking.bank.cards.repository")
-//@EntityScan("com.cisu.breaking.bank.cards.entity")
-@EnableConfigurationProperties(value = CardsContactInfoDto.class)
-@EnableJpaAuditing(auditorAwareRef = "auditAwareImpl") // activate the JPA JpaAuditing and leverage the BEAN with the name auditAwareImpl to understand the  current auditor via  "getCurrentAuditor"
+@SpringBootApplication
+/*@ComponentScans({ @ComponentScan("com.cisu.breaking.bank.cards.controller") })
+@EnableJpaRepositories("com.cisu.breaking.bank.cards.repository")
+@EntityScan("com.cisu.breaking.bank.cards.model")*/
+@EnableJpaAuditing(auditorAwareRef = "auditAwareImpl")
+@EnableConfigurationProperties(value = {CardsContactInfoDto.class})
 @OpenAPIDefinition(
-        info = @Info(
-                title = "cards REST API Documentation",
-                description = "REST API documentation for the cards microservice. It provides operations to manage customer details and their associated bank cards, including creation, retrieval, and deletion.",
-                version = "V1",
-                contact = @Contact(
-                        name = "George Grekis",
-                        email = "georgrekis@gmail.com",
-                        url = "" // add my website when it's ready
-                ),
-                license = @License(
-                        name = "Apache 2.0",
-                        url = "https://www.apache.org/licenses/LICENSE-2.0"
-                )
-        )
-//        externalDocs = @ExternalDocumentation(
-//               description = "An externalDocs for more help",
-//               url = "" // the url of  externalDocs
-//        )
+		info = @Info(
+				title = "Cards microservice REST API Documentation",
+				description = "Cards microservice REST API Documentation",
+				version = "v1",
+				contact = @Contact(
+						name = "George Grekis",
+						email = "georgrekis@gmail.com",
+						url = ""
+				),
+				license = @License(
+						name = "Apache 2.0",
+						url = "" // TODO: add license url
+				)
+		),
+		externalDocs = @ExternalDocumentation(
+				description = "Cards microservice REST API Documentation",
+				url = ""
+		)
 )
 public class CardsApplication {
 

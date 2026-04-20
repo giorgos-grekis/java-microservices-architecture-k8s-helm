@@ -1,6 +1,7 @@
 package com.cisu.breaking.bank.loans;
 
 import com.cisu.breaking.bank.loans.dto.LoansContactInfoDto;
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -10,31 +11,31 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-@SpringBootApplication // main class spring-boot
-//@ComponentScan({ComponentScan("com.cisu.breaking.bank.loans.controller")})
-//@EnableJpaRepositories("com.cisu.breaking.bank.loans.repository")
-//@EntityScan("com.cisu.breaking.bank.loans.entity")
+@SpringBootApplication
+/*@ComponentScans({ @ComponentScan("com.cisu.breaking.bank.controller") })
+@EnableJpaRepositories("com.cisu.breaking.bank.loans.repository")
+@EntityScan("com.cisu.breaking.bank.loans.model")*/
+@EnableJpaAuditing(auditorAwareRef = "auditAwareImpl")
 @EnableConfigurationProperties(value = {LoansContactInfoDto.class})
-@EnableJpaAuditing(auditorAwareRef = "auditAwareImpl") // activate the JPA JpaAuditing and leverage the BEAN with the name auditAwareImpl to understand the  current auditor via  "getCurrentAuditor"
 @OpenAPIDefinition(
-        info = @Info(
-                title = "loans REST API Documentation",
-                description = "REST API documentation for the loans microservice. It provides operations to manage customer details and their associated bank loans, including creation, retrieval, and deletion.",
-                version = "V1",
-                contact = @Contact(
-                        name = "George Grekis",
-                        email = "georgrekis@gmail.com",
-                        url = "" // add my website when it's ready
-                ),
-                license = @License(
-                        name = "Apache 2.0",
-                        url = "https://www.apache.org/licenses/LICENSE-2.0"
-                )
-        )
-//        externalDocs = @ExternalDocumentation(
-//               description = "An externalDocs for more help",
-//               url = "" // the url of  externalDocs
-//        )
+		info = @Info(
+				title = "Loans microservice REST API Documentation",
+				description = "Breaking Bank Loans microservice REST API Documentation",
+				version = "v1",
+				contact = @Contact(
+						name = "George Grekis",
+						email = "georgrekis@gmail.com",
+						url = ""
+				),
+				license = @License(
+						name = "Apache 2.0",
+						url = ""
+				)
+		),
+		externalDocs = @ExternalDocumentation(
+				description = "Breaking Bank Loans microservice REST API Documentation",
+				url = ""
+		)
 )
 public class LoansApplication {
 

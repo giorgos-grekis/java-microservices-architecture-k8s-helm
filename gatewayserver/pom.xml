@@ -8,10 +8,11 @@
         <version>4.0.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.cisu.breaking</groupId>
+	<groupId>com.cisu.breaking.bank</groupId>
 	<artifactId>gatewayserver</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>gatewayserver</name>
+	<description>Edge Server for Breaking Bank microservices</description>
     <url/>
     <licenses>
         <license/>
@@ -25,18 +26,25 @@
         <tag/>
         <url/>
     </scm>
-<!--	<properties>-->
-<!--		<java.version>21</java.version>-->
-<!--        <spring-cloud.version>2025.1.0</spring-cloud.version>-->
-<!--	</properties>-->
-    <properties>
-        <java.version>25</java.version>
-        <spring-cloud.version>2025.1.1</spring-cloud.version>
-    </properties>
+	<properties>
+		<java.version>21</java.version>
+        <spring-cloud.version>2025.1.0</spring-cloud.version>
+		<otelVersion>2.22.0</otelVersion>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.opentelemetry.javaagent</groupId>
+			<artifactId>opentelemetry-javaagent</artifactId>
+			<version>${otelVersion}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -46,11 +54,18 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-        </dependency>
-
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-circuitbreaker-reactor-resilience4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis-reactive</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -72,15 +87,7 @@
             <artifactId>spring-boot-starter-actuator-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-circuitbreaker-reactor-resilience4j</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-session-data-redis</artifactId>
-        </dependency>
-    </dependencies>
+	</dependencies>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -105,7 +112,7 @@
 				<version>3.5.1</version>
 				<configuration>
 					<to>
-						<image>cisu2/${project.artifactId}:005</image>
+						<image>cisu2/${project.artifactId}:s11</image>
 					</to>
 				</configuration>
 			</plugin>

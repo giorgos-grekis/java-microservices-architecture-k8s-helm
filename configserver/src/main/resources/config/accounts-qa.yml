@@ -1,16 +1,11 @@
-#spring:
-#  config:
-#    activate:
-#      on-profile: "qa" # Απαραίτητο για να ξέρει πότε να διαβάσει αυτό το block
-
 build:
   version: "2.0"
 
 accounts:
-  message: "Welcome to accounts ms QA"
+  message: "Welcome to Breaking Bank accounts related QA APIs "
   contactDetails:
-    name: "John Doe - QA"
-    email: "john@testqa.com"
+    name: "John Doe - QA Lead"
+    email: "john@doe.com"
   onCallSupport:
-    - (000) 666-4269
-    - (111) 999-6942
+    - (666) 265-3765
+    - (666) 734-8371

@@ -1,18 +1,11 @@
-#spring:
-#  config:
-#    activate:
-#      on-profile: "qa"
-
 build:
   version: "2.0"
 
 cards:
-  message: "Welcome to cards ms QA"
+  message: "Welcome to breaking Bank cards related QA APIs "
   contactDetails:
-    name: "John Doe - QA"
-    email: "john@testqa.com"
+    name: "John Doe - QA Lead"
+    email: "john@doe-qa.com"
   onCallSupport:
-    - (000) 666-4269
-    - (111) 999-6942
-
-
+    - (310) 875-4367
+    - (201) 236-1267

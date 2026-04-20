@@ -1,16 +1,11 @@
-#spring:
-#  config:
-#    activate:
-#      on-profile: "prod"
-
 build:
   version: "1.0"
 
 loans:
-  message: "Welcome to loans ms PROD"
+  message: "Welcome to  Breaking Bank loans related prod APIs "
   contactDetails:
-    name: "John Doe - PROD"
-    email: "john@testprod.com"
+    name: "John Doe - Product Owner"
+    email: "john@doe-po.com"
   onCallSupport:
-    - (000) 666-4269
-    - (111) 999-6942
+    - (723) 656-8709
+    - (156) 342-0956

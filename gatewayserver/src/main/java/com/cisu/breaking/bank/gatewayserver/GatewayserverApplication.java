@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.circuitbreaker.resilience4j.ReactiveResilience4JCircuitBreakerFactory;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JConfigBuilder;
 import org.springframework.cloud.client.circuitbreaker.Customizer;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
 import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
 import org.springframework.cloud.gateway.route.RouteLocator;
@@ -19,8 +18,8 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+
 @SpringBootApplication
-//@EnableDiscoveryClient
 public class GatewayserverApplication {
 
 	public static void main(String[] args) {
@@ -30,54 +29,51 @@ public class GatewayserverApplication {
 	@Bean
 	public RouteLocator breakingBankRouteConfig(RouteLocatorBuilder routeLocatorBuilder) {
 		return routeLocatorBuilder.routes()
+                        // accounts route
 						.route(p -> p
 								.path("/breakingBank/accounts/**")
 								.filters( f -> f.rewritePath("/breakingBank/accounts/(?<segment>.*)","/${segment}")
 										.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
-                                        .circuitBreaker(config -> config.setName("accountsCircuitBreaker")
-                                                .setFallbackUri("forward:/contactSupport"))
-                                        )
+										.circuitBreaker(config -> config.setName("accountsCircuitBreaker")
+												.setFallbackUri("forward:/contactSupport")))
 								.uri("lb://ACCOUNTS"))
+                    // loans route
 					.route(p -> p
 							.path("/breakingBank/loans/**")
 							.filters( f -> f.rewritePath("/breakingBank/loans/(?<segment>.*)","/${segment}")
 									.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
-                                    .retry(retryConfig -> retryConfig.setRetries(3)
-                                            .setMethods(HttpMethod.GET)
-                                            .setBackoff(Duration.ofMillis(100),Duration.ofMillis(100),2,true))
-                                    )
+									.retry(retryConfig -> retryConfig.setRetries(3)
+											.setMethods(HttpMethod.GET)
+											.setBackoff(Duration.ofMillis(100),Duration.ofMillis(1000),2,true)))
 							.uri("lb://LOANS"))
+                    // cards route
 					.route(p -> p
 							.path("/breakingBank/cards/**")
 							.filters( f -> f.rewritePath("/breakingBank/cards/(?<segment>.*)","/${segment}")
 									.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
-                                            .requestRateLimiter(config ->
-                                                    config.setRateLimiter(redisRateLimiter())
-                                                            .setKeyResolver(userKeyResolver())
-                                            )
-                                    )
+									.requestRateLimiter(config -> config.setRateLimiter(redisRateLimiter())
+											.setKeyResolver(userKeyResolver())))
 							.uri("lb://CARDS")).build();
-
-
 	}
 
+	@Bean
+	public Customizer<ReactiveResilience4JCircuitBreakerFactory> defaultCustomizer() {
+		return factory -> factory.configureDefault(id -> new Resilience4JConfigBuilder(id)
+				.circuitBreakerConfig(CircuitBreakerConfig.ofDefaults())
+				.timeLimiterConfig(TimeLimiterConfig.custom().timeoutDuration(Duration.ofSeconds(10))
+						.build()).build());
+	}
 
-    @Bean
-    public Customizer<ReactiveResilience4JCircuitBreakerFactory> defaultCustomizer() {
-        return factory -> factory.configureDefault(id -> new Resilience4JConfigBuilder(id)
-                .circuitBreakerConfig(CircuitBreakerConfig.ofDefaults())
-                .timeLimiterConfig(TimeLimiterConfig.custom().timeoutDuration(Duration.ofSeconds(4)).build()).build());
-    }
+	@Bean
+	public RedisRateLimiter redisRateLimiter() {
+		return new RedisRateLimiter(1, 1, 1);
+	}
 
-    @Bean
-    public RedisRateLimiter redisRateLimiter() {
-        return new RedisRateLimiter(1, 1, 1);
-    }
-
-    @Bean
-    KeyResolver userKeyResolver() {
-        return exchange -> Mono.justOrEmpty(exchange.getRequest().getHeaders().getFirst("user"))
-                .defaultIfEmpty("anonymous");
-    }
+    // RequestRateLimiter GatewayFilter redis
+	@Bean
+	KeyResolver userKeyResolver() {
+		return exchange -> Mono.justOrEmpty(exchange.getRequest().getHeaders().getFirst("user"))
+				.defaultIfEmpty("anonymous");
+	}
 
 }

@@ -1,16 +1,11 @@
-#spring:
-#  config:
-#    activate:
-#      on-profile: "prod"
-
 build:
   version: "1.0"
 
 cards:
-  message: "Welcome to cards ms PROD"
+  message: "Welcome to Breaking Bank cards related prod APIs "
   contactDetails:
-    name: "John Doe - PROD"
-    email: "john@testprod.com"
+    name: "John Doe - Product Owner"
+    email: "john@doe-po.com"
   onCallSupport:
-    - (000) 666-4269
-    - (111) 999-6942
+    - (617) 432-2356
+    - (936) 564-8721

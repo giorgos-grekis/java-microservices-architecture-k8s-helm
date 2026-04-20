@@ -14,26 +14,24 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@ToString
+@MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-@MappedSuperclass // this class is going to act as a superclass for all entities
+@Getter @Setter @ToString
 public class BaseEntity {
 
     @CreatedDate
-    @Column(name = "created_at", updatable = false)
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 
     @CreatedBy
-    @Column(name = "created_by", updatable = false)
+    @Column(updatable = false)
     private String createdBy;
 
     @LastModifiedDate
-    @Column(name = "updated_at", insertable = false)
+    @Column(insertable = false)
     private LocalDateTime updatedAt;
 
     @LastModifiedBy
-    @Column(name = "updated_by", insertable = false)
+    @Column(insertable = false)
     private String updatedBy;
 }

@@ -14,8 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,34 +25,36 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
 
 @Tag(
-        name = "Cards",
-        description = "CRUD REST APIs for Cards "
+        name = "CRUD REST APIs for Cards",
+        description = "CRUD REST APIs to CREATE, UPDATE, FETCH AND DELETE card details"
 )
 @RestController
-@RequestMapping(path = "/api/v1", produces = {MediaType.APPLICATION_JSON_VALUE})
-//@AllArgsConstructor
-@RequiredArgsConstructor
+@RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
 @Validated
 public class CardsController {
 
     private static final Logger logger = LoggerFactory.getLogger(CardsController.class);
 
-    private final ICardsService iCardsService;
-    private final Environment environment;
-    private final CardsContactInfoDto cardsContactInfoDto;
+    private ICardsService iCardsService;
+
+    public CardsController(ICardsService iCardsService) {
+        this.iCardsService = iCardsService;
+    }
 
     @Value("${build.version}")
     private String buildVersion;
 
+    @Autowired
+    private Environment environment;
+
+    @Autowired
+    private CardsContactInfoDto cardsContactInfoDto;
 
     @Operation(
-            summary = "Create Card",
-            description = "API to create a new Card"
+            summary = "Create Card REST API",
+            description = "REST API to create new Card"
     )
     @ApiResponses({
             @ApiResponse(
@@ -72,7 +72,7 @@ public class CardsController {
     )
     @PostMapping("/create")
     public ResponseEntity<ResponseDto> createCard(@Valid @RequestParam
-//                                                      @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
+                                                      @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
                                                       String mobileNumber) {
         iCardsService.createCard(mobileNumber);
             return ResponseEntity
@@ -98,13 +98,13 @@ public class CardsController {
             )
     })
     @GetMapping("/fetch")
-    public ResponseEntity<CardsDto> fetchCardDetails(
-            @RequestHeader("breaking-bank-correlation-id") String correlationId,
-            @RequestParam
-//                                                               @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
+    public ResponseEntity<CardsDto> fetchCardDetails(@RequestHeader("breaking-bank-correlation-id") String correlationId,
+                                                                @RequestParam
+                                                               @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
                                                                String mobileNumber) {
-        logger.debug("breaking-bank-correlation-id: {}", correlationId);
+        logger.debug("fetchCardDetails method start");
         CardsDto cardsDto = iCardsService.fetchCard(mobileNumber);
+        logger.debug("fetchCardDetails method end");
         return ResponseEntity.status(HttpStatus.OK).body(cardsDto);
     }
 
@@ -166,7 +166,7 @@ public class CardsController {
     })
     @DeleteMapping("/delete")
     public ResponseEntity<ResponseDto> deleteCardDetails(@RequestParam
-//                                                                @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
+                                                                @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
                                                                 String mobileNumber) {
         boolean isDeleted = iCardsService.deleteCard(mobileNumber);
         if(isDeleted) {
@@ -180,10 +180,9 @@ public class CardsController {
         }
     }
 
-
     @Operation(
-            summary = "Get Build Information",
-            description = "Get Build Information that is deployed into cards ms"
+            summary = "Get Build information",
+            description = "Get Build information that is deployed into cards microservice"
     )
     @ApiResponses({
             @ApiResponse(
@@ -197,16 +196,18 @@ public class CardsController {
                             schema = @Schema(implementation = ErrorResponseDto.class)
                     )
             )
-    })
+    }
+    )
     @GetMapping("/build-info")
     public ResponseEntity<String> getBuildInfo() {
-        return ResponseEntity.status(HttpStatus.OK).body(buildVersion);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(buildVersion);
     }
 
-
     @Operation(
-            summary = "Get Java Version",
-            description = "Get Java Version that is deployed into cards ms"
+            summary = "Get Java version",
+            description = "Get Java versions details that is installed into cards microservice"
     )
     @ApiResponses({
             @ApiResponse(
@@ -220,22 +221,18 @@ public class CardsController {
                             schema = @Schema(implementation = ErrorResponseDto.class)
                     )
             )
-    })
+    }
+    )
     @GetMapping("/java-version")
-    public ResponseEntity<Map<String, String>> getJavaVersion() {
-        Map<String, String> response = new HashMap<>();
-
-        response.put("java", environment.getProperty("JAVA_HOME", "Not Found"));
-        response.put("maven", environment.getProperty("MAVEN_HOME", "Not Found"));
-
+    public ResponseEntity<String> getJavaVersion() {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(response);
+                .body(environment.getProperty("JAVA_HOME"));
     }
 
     @Operation(
             summary = "Get Contact Info",
-            description = "Get Contact Info into cards ms"
+            description = "Contact Info details that can be reached out in case of any issues"
     )
     @ApiResponses({
             @ApiResponse(
@@ -249,7 +246,8 @@ public class CardsController {
                             schema = @Schema(implementation = ErrorResponseDto.class)
                     )
             )
-    })
+    }
+    )
     @GetMapping("/contact-info")
     public ResponseEntity<CardsContactInfoDto> getContactInfo() {
         return ResponseEntity

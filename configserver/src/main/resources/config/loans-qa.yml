@@ -1,16 +1,11 @@
-#spring:
-#  config:
-#    activate:
-#      on-profile: "qa"
-
 build:
   version: "2.0"
 
 loans:
-  message: "Welcome to loans ms QA"
+  message: "Welcome to Breaking Bank loans related QA APIs "
   contactDetails:
-    name: "John Doe - QA"
-    email: "john@testqa.com"
+    name: "John Doe - QA Lead"
+    email: "john@doe.com"
   onCallSupport:
-    - (000) 666-4269
-    - (111) 999-6942
+    - (785) 545-6565
+    - (853) 546-3467

@@ -2,66 +2,62 @@ server:
   port: 9000
 spring:
   application:
-    name: cards # same name with configserver resources
+    name: "cards"
+  profiles:
+    active: "prod"
   datasource:
-    url: jdbc:postgresql://localhost:5434/cardsdb
-    username: 'postgres'
-    password: 'root'
-  ## TODO: enable this after development
-  sql:
-    init:
-      mode: always
-
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: ''
+  h2:
+    console:
+      enabled: true
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: update
     show-sql: true
-
-  profiles:
-    active: "prod" # ["", "qa", "prod"]
   config:
-    import: "optional:configserver:http://localhost:8071"
-  rabbitmq:
-    host: "localhost"
-    port: 5672 # or 15672
-    username: "guest"
-    password: "guest"
+    import: "optional:configserver:http://localhost:8071/"
 
 management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
   health:
     readiness-state:
       enabled: true
     liveness-state:
       enabled: true
-  endpoints:
-    web:
-      exposure:
-        include: "*" # enable and expose all management endpoint supported by the spring boot actuator
   endpoint:
     shutdown:
-      enabled: true # shutdown the cards ms
+      access: unrestricted
     health:
       probes:
         enabled: true
-    info:
-      env:
-        enabled: true # enabled env related information
+  info:
+    env:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
 
 
 eureka:
   instance:
-    prefer-ip-address: true
+    preferIpAddress: true
   client:
-    fetchRegistry: true # cards ms will try to fetch the registry details whenever it's trying to connect with other microservices.
-    registerWithEureka: true # cards ms will be registered with the Eureka server.
+    fetchRegistry: true
+    registerWithEureka: true
     serviceUrl:
       defaultZone: http://localhost:8070/eureka/
 
 info:
   app:
-    name: "Cards"
-    description: "Cards Application"
+    name: "cards"
+    description: "Bank Cards Application"
     version: "1.0.0"
 
 logging:
@@ -71,3 +67,6 @@ logging:
         breaking:
           bank:
             cards: DEBUG
+
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"

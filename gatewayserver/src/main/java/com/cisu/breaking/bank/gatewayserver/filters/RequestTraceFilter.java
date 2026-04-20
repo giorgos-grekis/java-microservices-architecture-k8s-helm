@@ -15,10 +15,11 @@ import reactor.core.publisher.Mono;
 @Component
 public class RequestTraceFilter implements GlobalFilter {
 
+    // TODO: change with @Slf4j
     private static final Logger logger = LoggerFactory.getLogger(RequestTraceFilter.class);
 
     @Autowired
-     FilterUtility filterUtility;
+    FilterUtility filterUtility;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -35,15 +36,11 @@ public class RequestTraceFilter implements GlobalFilter {
     }
 
     private boolean isCorrelationIdPresent(HttpHeaders requestHeaders) {
-        if (filterUtility.getCorrelationId(requestHeaders) == null) {
+        if (filterUtility.getCorrelationId(requestHeaders) != null) {
+            return true;
+        } else {
             return false;
         }
-        return true;
-//        if (filterUtility.getCorrelationId(requestHeaders) != null) {
-//            return true;
-//        } else {
-//            return false;
-//        }
     }
 
     private String generateCorrelationId() {

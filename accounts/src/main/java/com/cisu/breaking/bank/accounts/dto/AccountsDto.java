@@ -1,35 +1,33 @@
 package com.cisu.breaking.bank.accounts.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
+@Data
 @Schema(
         name = "Accounts",
         description = "Schema to hold Account information"
 )
-@Data
 public class AccountsDto {
+
+    @NotEmpty(message = "AccountNumber can not be a null or empty")
+    @Pattern(regexp="(^$|[0-9]{10})",message = "AccountNumber must be 10 digits")
     @Schema(
-            description = "Account Number",
-            example = "123456789"
+            description = "Account Number of Bank account", example = "6949999999"
     )
-    @NotBlank(message = "Account Number is required")
-    @Pattern(regexp = "(^$|[0-9]{10})", message = "Account Number must be 10 digits")
     private Long accountNumber;
 
+    @NotEmpty(message = "AccountType can not be a null or empty")
     @Schema(
-            description = "Account type",
-            example = "Saving"
+            description = "Account type of Bank account", example = "Savings"
     )
-    @NotBlank(message = "Account Type is required")
     private String accountType;
 
+    @NotEmpty(message = "BranchAddress can not be a null or empty")
     @Schema(
-            description = "Branch Address",
-            example = "10 Downing St, London, SW1A 2AA"
+            description = "Bank branch address", example = "123 NewYork"
     )
-    @NotBlank(message = "Branch Address is required")
     private String branchAddress;
 }

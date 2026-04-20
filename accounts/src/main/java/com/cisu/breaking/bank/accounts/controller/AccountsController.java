@@ -1,6 +1,6 @@
 package com.cisu.breaking.bank.accounts.controller;
 
-import com.cisu.breaking.bank.accounts.constans.AccountsConstants;
+import com.cisu.breaking.bank.accounts.constants.AccountsConstants;
 import com.cisu.breaking.bank.accounts.dto.AccountsContactInfoDto;
 import com.cisu.breaking.bank.accounts.dto.CustomerDto;
 import com.cisu.breaking.bank.accounts.dto.ErrorResponseDto;
@@ -15,9 +15,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import jakarta.validation.constraints.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -26,74 +27,88 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
 
 @Tag(
-        name = "Accounts",
-        description = "CRUD REST APIs for Accounts "
+        name = "CRUD REST APIs for Accounts",
+        description = "CRUD REST APIs to CREATE, UPDATE, FETCH AND DELETE account details"
 )
-
 @RestController
-@RequestMapping(path = "/api/v1", produces = {MediaType.APPLICATION_JSON_VALUE})
-//@AllArgsConstructor
-@RequiredArgsConstructor
+@RequestMapping(path="/api", produces = {MediaType.APPLICATION_JSON_VALUE})
 @Validated
 public class AccountsController {
 
     private static final Logger logger = LoggerFactory.getLogger(AccountsController.class);
 
     private final IAccountsService iAccountsService;
-    private final Environment environment;
-    private final AccountsContactInfoDto accountsContactInfoDto;
 
-   @Value("${build.version}")
-   private String buildVersion;
+    public AccountsController(IAccountsService iAccountsService) {
+        this.iAccountsService = iAccountsService;
+    }
 
+    @Value("${build.version}")
+    private String buildVersion;
 
+    @Autowired
+    private Environment environment;
 
-   @Operation(
-           summary = "Create Account",
-           description = "API to create a new customer and account"
-   )
-   @ApiResponse(
-           responseCode = "201",
-           description = "HTTP Status CREATED"
-   )
-   @PostMapping("/create")
-   public ResponseEntity<ResponseDto> createAccount(
-           @Valid
-           @RequestBody CustomerDto customerDto
-   ) {
-       iAccountsService.createAccount(customerDto);
+    @Autowired
+    private AccountsContactInfoDto accountsContactInfoDto;
 
+    @Operation(
+            summary = "Create Account REST API",
+            description = "REST API to create new Customer & Account"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "HTTP Status CREATED"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )
+    }
+    )
+    @PostMapping("/create")
+    public ResponseEntity<ResponseDto> createAccount(@Valid @RequestBody CustomerDto customerDto) {
+        iAccountsService.createAccount(customerDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new ResponseDto(
-                        AccountsConstants.STATUS_201,
-                        AccountsConstants.MESSAGE_201));
-   }
+                .body(new ResponseDto(AccountsConstants.STATUS_201, AccountsConstants.MESSAGE_201));
+    }
 
     @Operation(
-            summary = "Get Account Details",
-            description = "fetch account details with mobile number"
+            summary = "Fetch Account Details REST API",
+            description = "REST API to fetch Customer &  Account details based on a mobile number"
     )
-    @ApiResponse(
-            responseCode = "200",
-            description = "HTTP Status OK"
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )
+    }
     )
-   @GetMapping("/fetch")
-   public ResponseEntity<CustomerDto> fetchAccountDetails(
-           @Valid @RequestParam String mobileNumber
-   ) {
-//       String formattedNumber = formatMobileNumber(mobileNumber);
-       CustomerDto customerDto = iAccountsService.fetchAccount(mobileNumber);
-       return ResponseEntity.status(HttpStatus.OK).body(customerDto);
-   }
+    @GetMapping("/fetch")
+    public ResponseEntity<CustomerDto> fetchAccountDetails(@RequestParam
+                                                               @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
+                                                               String mobileNumber) {
+        CustomerDto customerDto = iAccountsService.fetchAccount(mobileNumber);
+        return ResponseEntity.status(HttpStatus.OK).body(customerDto);
+    }
 
     @Operation(
-            summary = "Update Account Details",
-            description = "update account and customer based on a mobile number"
+            summary = "Update Account Details REST API",
+            description = "REST API to update Customer &  Account details based on a account number"
     )
     @ApiResponses({
             @ApiResponse(
@@ -108,10 +123,11 @@ public class AccountsController {
                     responseCode = "500",
                     description = "HTTP Status Internal Server Error",
                     content = @Content(
-                        schema = @Schema(implementation = ErrorResponseDto.class)
+                            schema = @Schema(implementation = ErrorResponseDto.class)
                     )
             )
-    })
+    }
+    )
     @PutMapping("/update")
     public ResponseEntity<ResponseDto> updateAccountDetails(@Valid @RequestBody CustomerDto customerDto) {
         boolean isUpdated = iAccountsService.updateAccount(customerDto);
@@ -126,10 +142,9 @@ public class AccountsController {
         }
     }
 
-
     @Operation(
-            summary = "Delete Account & Customer Details",
-            description = "delete account and customer based on a mobile number"
+            summary = "Delete Account & Customer Details REST API",
+            description = "REST API to delete Customer &  Account details based on a mobile number"
     )
     @ApiResponses({
             @ApiResponse(
@@ -142,16 +157,18 @@ public class AccountsController {
             ),
             @ApiResponse(
                     responseCode = "500",
-                    description = "HTTP Status Internal Server Error"
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
             )
-    })
+    }
+    )
     @DeleteMapping("/delete")
-    public ResponseEntity<ResponseDto> deleteAccountDetails(
-//            @PhoneNumber
-            @RequestParam String mobileNumber) {
-        String formattedNumber = formatMobileNumber(mobileNumber);
-
-        boolean isDeleted = iAccountsService.deleteAccount(formattedNumber);
+    public ResponseEntity<ResponseDto> deleteAccountDetails(@RequestParam
+                                                                @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
+                                                                String mobileNumber) {
+        boolean isDeleted = iAccountsService.deleteAccount(mobileNumber);
         if(isDeleted) {
             return ResponseEntity
                     .status(HttpStatus.OK)
@@ -164,8 +181,8 @@ public class AccountsController {
     }
 
     @Operation(
-            summary = "Get Build Information",
-            description = "Get Build Information that is deployed into accounts ms"
+            summary = "Get Build information",
+            description = "Get Build information that is deployed into accounts microservice"
     )
     @ApiResponses({
             @ApiResponse(
@@ -179,28 +196,27 @@ public class AccountsController {
                             schema = @Schema(implementation = ErrorResponseDto.class)
                     )
             )
-    })
-
-    @Retry(name = "getBuildInfo", fallbackMethod = "getBuildInfoFallback")
+    }
+    )
+    @Retry(name = "getBuildInfo",fallbackMethod = "getBuildInfoFallback")
     @GetMapping("/build-info")
     public ResponseEntity<String> getBuildInfo() {
-       logger.debug("getBuildInfo method Invoked");
-       return ResponseEntity
-               .status(HttpStatus.OK)
-               .body(buildVersion);
+        logger.debug("getBuildInfo() method Invoked");
+        return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(buildVersion);
     }
 
     public ResponseEntity<String> getBuildInfoFallback(Throwable throwable) {
-        logger.debug("getBuildInfoFallback method Invoked");
+        logger.debug("getBuildInfoFallback() method Invoked");
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body("getBuildInfoFallback");
+                .body("0.9");
     }
 
-
     @Operation(
-            summary = "Get Java Version",
-            description = "Get Java Version that is deployed into accounts ms"
+            summary = "Get Java version",
+            description = "Get Java versions details that is installed into accounts microservice"
     )
     @ApiResponses({
             @ApiResponse(
@@ -214,35 +230,25 @@ public class AccountsController {
                             schema = @Schema(implementation = ErrorResponseDto.class)
                     )
             )
-    })
-
-    @RateLimiter(name = "getJavaVersion", fallbackMethod = "getJavaVersionFallback")
+    }
+    )
+    @RateLimiter(name= "getJavaVersion", fallbackMethod = "getJavaVersionFallback")
     @GetMapping("/java-version")
-    public ResponseEntity<Map<String, String>> getJavaVersion() {
-        Map<String, String> response = new HashMap<>();
-
-        response.put("java", environment.getProperty("JAVA_HOME", "Not Found"));
-        response.put("maven", environment.getProperty("MAVEN_HOME", "Not Found"));
-
+    public ResponseEntity<String> getJavaVersion() {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(response);
+                .body(environment.getProperty("JAVA_HOME"));
     }
 
-    public ResponseEntity<Map<String, String>> getJavaVersionFallback(Throwable throwable) {
-        Map<String, String> response = new HashMap<>();
-
-        response.put("java", "java 25");
-        response.put("maven", "maven **");
-
+    public ResponseEntity<String> getJavaVersionFallback(Throwable throwable) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(response);
+                .body("Java 21");
     }
 
     @Operation(
             summary = "Get Contact Info",
-            description = "Get Contact Info into accounts ms"
+            description = "Contact Info details that can be reached out in case of any issues"
     )
     @ApiResponses({
             @ApiResponse(
@@ -256,7 +262,8 @@ public class AccountsController {
                             schema = @Schema(implementation = ErrorResponseDto.class)
                     )
             )
-    })
+    }
+    )
     @GetMapping("/contact-info")
     public ResponseEntity<AccountsContactInfoDto> getContactInfo() {
         return ResponseEntity
@@ -264,13 +271,5 @@ public class AccountsController {
                 .body(accountsContactInfoDto);
     }
 
-
-    // TODO: move into commons
-    private String formatMobileNumber(String mobileNumber) {
-        if (mobileNumber != null && mobileNumber.startsWith(" ")) {
-            mobileNumber = mobileNumber.replaceFirst(" ", "+");
-        }
-        return mobileNumber != null ? mobileNumber.trim() : null;
-    }
 
 }

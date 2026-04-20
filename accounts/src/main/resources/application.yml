@@ -1,86 +1,76 @@
 server:
   port: 8080
-
 spring:
   application:
-    name: accounts # same name with configserver resources
-  datasource:
-      url: jdbc:postgresql://localhost:5432/accountsdb
-      username: 'postgres'
-      password: 'root'
-  ## TODO: enable this after development
-  sql:
-    init:
-      mode: always
-
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    hibernate:
-      ddl-auto: update # create the tables automatically
-    show-sql: true # show the sql queries
-
-
+    name: "accounts"
   profiles:
-    active: "prod" # ["", "qa", "prod"]
+    active: "prod"
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: ''
+  h2:
+    console:
+      enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
   config:
-    import: "optional:configserver:http://localhost:8071"
-  rabbitmq:
-    host: "localhost"
-    port: 5672 # or 15672
-    username: "guest"
-    password: "guest"
-
+    import: "optional:configserver:http://localhost:8071/"
   cloud:
     openfeign:
       circuitbreaker:
         enabled: true
 
 management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
   health:
     readiness-state:
       enabled: true
     liveness-state:
       enabled: true
-  endpoints:
-    web:
-      exposure:
-        include: "*" # enable and expose all management endpoint supported by the spring boot actuator
   endpoint:
     shutdown:
-      enabled: true # shutdown the account ms
-    info:
-      env:
-        enabled: true # enabled env related information
+      access: unrestricted
     health:
       probes:
         enabled: true
+  info:
+    env:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
 
-#endpoints:
-#  shutdown:
-#    enabled: true
 
 eureka:
   instance:
-    prefer-ip-address: true
+    preferIpAddress: true
   client:
-    fetchRegistry: true # accounts ms will try to fetch the registry details whenever it's trying to connect with other microservices.
-    registerWithEureka: true # accounts ms will be registered with the Eureka server.
+    fetchRegistry: true
+    registerWithEureka: true
     serviceUrl:
       defaultZone: http://localhost:8070/eureka/
 
 info:
   app:
     name: "accounts"
-    description: "Accounts Application"
+    description: "Bank Accounts Application"
     version: "1.0.0"
 
 logging:
   level:
-    com:
-      cisu:
-        breaking:
-          bank:
-            accounts: DEBUG
+      com:
+        cisu:
+          breaking:
+            bank:
+              accounts: DEBUG
   pattern:
     level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
 
@@ -92,6 +82,7 @@ resilience4j.circuitbreaker:
       failureRateThreshold: 50
       waitDurationInOpenState: 10000
 
+# Configs for Retries
 resilience4j.retry:
   configs:
     default:

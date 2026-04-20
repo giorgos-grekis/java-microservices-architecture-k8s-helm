@@ -74,7 +74,11 @@ java -jar target/accounts-0.0.1-SNAPSHOT.jar
 
 Build via docker
 
-docker build . -t cisu2/account:003
+`docker build . -t cisu2/account:003`
+
+Build via maven
+
+`mvn compile jib:dockerBuild`
 
 change the version also in docker-compose.yml
 
@@ -217,6 +221,25 @@ https://microservices.io/
 
 -----------------------------------------------
 
+see metrics
+
+http://localhost:8080/actuator/metrics
+
+see specific metric
+
+http://localhost:8080/actuator/metrics/system.cpu.usage
+
+prometheus
+http://localhost:8080/actuator/prometheus
+
+
+-------------------------------------------------
+
+create Webhooks 
+
+https://hookdeck.com/
+
+-------------------------------------------------
 ubiq
 
 sudo apt update

@@ -14,8 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,36 +25,36 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
 
 @Tag(
-        name = "Loans",
-        description = "CRUD REST APIs for Loans "
+        name = "CRUD REST APIs for Loans in Breaking Bank",
+        description = "CRUD REST APIs in Breaking Bank to CREATE, UPDATE, FETCH AND DELETE loan details"
 )
-
-// TODO: maybe i need formatMobileNumber from AccountsController (account ms)
-
 @RestController
-@RequestMapping(path = "/api/v1", produces = {MediaType.APPLICATION_JSON_VALUE})
-//@AllArgsConstructor
-@RequiredArgsConstructor
+@RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
 @Validated
 public class LoansController {
 
     private static final Logger logger = LoggerFactory.getLogger(LoansController.class);
 
-    private final ILoansService iLoansService;
-    private final Environment environment;
-    private final LoansContactInfoDto loansContactInfoDto;
+    private ILoansService iLoansService;
+
+    public LoansController(ILoansService iLoansService) {
+        this.iLoansService = iLoansService;
+    }
 
     @Value("${build.version}")
     private String buildVersion;
 
+    @Autowired
+    private Environment environment;
+
+    @Autowired
+    private LoansContactInfoDto loansContactInfoDto;
+
     @Operation(
-            summary = "Create Loan",
-            description = "API to create a new loan"
+            summary = "Create Loan REST API",
+            description = "REST API to create new loan"
     )
     @ApiResponses({
             @ApiResponse(
@@ -74,7 +72,7 @@ public class LoansController {
     )
     @PostMapping("/create")
     public ResponseEntity<ResponseDto> createLoan(@RequestParam
-//                                                      @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
+                                                      @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
                                                       String mobileNumber) {
         iLoansService.createLoan(mobileNumber);
         return ResponseEntity
@@ -101,13 +99,13 @@ public class LoansController {
     }
     )
     @GetMapping("/fetch")
-    public ResponseEntity<LoansDto> fetchLoanDetails(
-            @RequestHeader("breaking-bank-correlation-id") String correlationId,
-            @RequestParam
-//                                                               @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
+    public ResponseEntity<LoansDto> fetchLoanDetails(@RequestHeader("breaking-bank-correlation-id") String correlationId,
+                                                                @RequestParam
+                                                               @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
                                                                String mobileNumber) {
-        logger.debug("breaking-bank-correlation-id: {}", correlationId);
+        logger.debug("fetchLoanDetails method start");
         LoansDto loansDto = iLoansService.fetchLoan(mobileNumber);
+        logger.debug("fetchLoanDetails method end");
         return ResponseEntity.status(HttpStatus.OK).body(loansDto);
     }
 
@@ -171,7 +169,7 @@ public class LoansController {
     )
     @DeleteMapping("/delete")
     public ResponseEntity<ResponseDto> deleteLoanDetails(@RequestParam
-//                                                                @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
+                                                                @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
                                                                 String mobileNumber) {
         boolean isDeleted = iLoansService.deleteLoan(mobileNumber);
         if(isDeleted) {
@@ -185,10 +183,9 @@ public class LoansController {
         }
     }
 
-
     @Operation(
-            summary = "Get Build Information",
-            description = "Get Build Information that is deployed into loans ms"
+            summary = "Get Build information",
+            description = "Get Build information that is deployed into cards microservice"
     )
     @ApiResponses({
             @ApiResponse(
@@ -202,16 +199,18 @@ public class LoansController {
                             schema = @Schema(implementation = ErrorResponseDto.class)
                     )
             )
-    })
+    }
+    )
     @GetMapping("/build-info")
     public ResponseEntity<String> getBuildInfo() {
-        return ResponseEntity.status(HttpStatus.OK).body(buildVersion);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(buildVersion);
     }
 
-
     @Operation(
-            summary = "Get Java Version",
-            description = "Get Java Version that is deployed into loans ms"
+            summary = "Get Java version",
+            description = "Get Java versions details that is installed into cards microservice"
     )
     @ApiResponses({
             @ApiResponse(
@@ -225,22 +224,18 @@ public class LoansController {
                             schema = @Schema(implementation = ErrorResponseDto.class)
                     )
             )
-    })
+    }
+    )
     @GetMapping("/java-version")
-    public ResponseEntity<Map<String, String>> getJavaVersion() {
-        Map<String, String> response = new HashMap<>();
-
-        response.put("java", environment.getProperty("JAVA_HOME", "Not Found"));
-        response.put("maven", environment.getProperty("MAVEN_HOME", "Not Found"));
-
+    public ResponseEntity<String> getJavaVersion() {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(response);
+                .body(environment.getProperty("JAVA_HOME"));
     }
 
     @Operation(
             summary = "Get Contact Info",
-            description = "Get Contact Info into loans ms"
+            description = "Contact Info details that can be reached out in case of any issues"
     )
     @ApiResponses({
             @ApiResponse(
@@ -254,8 +249,8 @@ public class LoansController {
                             schema = @Schema(implementation = ErrorResponseDto.class)
                     )
             )
-    })
-
+    }
+    )
     @GetMapping("/contact-info")
     public ResponseEntity<LoansContactInfoDto> getContactInfo() {
         logger.debug("Invoked Loans contact-info API");

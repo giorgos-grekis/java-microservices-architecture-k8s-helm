@@ -3,23 +3,17 @@ spring:
     name: "gatewayserver"
   config:
     import: "optional:configserver:http://localhost:8071/"
-#  cloud:
-#    gateway:
-#      server:
-#        webflux:
-#          discovery:
-#            locator:
-#              enabled: false
-#              lowerCaseServiceId: true
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
-      httpclient:
-        connect-timeout: 1000
-        response-timeout: 10s
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true # false
+              lowerCaseServiceId: true
+          httpclient:
+            connect-timeout: 1000
+            response-timeout: 10s
   data:
     redis:
       connect-timeout: 2s
@@ -38,11 +32,14 @@ management:
   info:
     env:
       enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
 
 info:
   app:
     name: "gatewayserver"
-    description: "Gateway Server Application"
+    description: "Breaking Bank Gateway Server Application"
     version: "1.0.0"
 
 logging:
@@ -53,6 +50,19 @@ logging:
           bank:
             gatewayserver: DEBUG
 
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
+
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    fetch-registry: true
+#    register-with-eureka: true
+#    service-url:
+#      defaultZone: "http://localhost:8070/eureka/"
+
+# CircuitBreaker Configs
 resilience4j.circuitbreaker:
   configs:
     default:
@@ -60,3 +70,4 @@ resilience4j.circuitbreaker:
       permittedNumberOfCallsInHalfOpenState: 2
       failureRateThreshold: 50
       waitDurationInOpenState: 10000
+

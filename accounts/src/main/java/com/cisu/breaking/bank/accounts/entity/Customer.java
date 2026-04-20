@@ -3,14 +3,12 @@ package com.cisu.breaking.bank.accounts.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-
+@Entity
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "customer")
 public class Customer extends BaseEntity {
 
     @Id
@@ -18,12 +16,11 @@ public class Customer extends BaseEntity {
     @Column(name = "customer_id")
     private Long customerId;
 
-    @Column(name = "name")
     private String name;
 
-    @Column(name = "email")
     private String email;
 
-    @Column(name = "mobileNumber")
+    @Column(name = "mobile_number")
     private String mobileNumber;
+
 }

@@ -7,10 +7,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.List;
 import java.util.Map;
 
-/**
- Not registered via @EnableConfigurationProperties,
- marked as Spring component, or scanned via @ConfigurationPropertiesScan
- */
 @ConfigurationProperties(prefix = "cards")
 @Getter
 @Setter
@@ -18,5 +14,6 @@ public class CardsContactInfoDto {
 
     private String message;
     private Map<String, String> contactDetails;
-    private  List<String> onCallSupport;
+    private List<String> onCallSupport;
+
 }
