@@ -138,7 +138,13 @@ docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:4-manag
 
 `docker run -d -p 127.0.0.1:7080:8080 -e KC_BOOTSTRAP_ADMIN_USERNAME=admin -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin quay.io/keycloak/keycloak:26.6.1 start-dev`
 
-Client ID: breaking-bank-callcenter-cc
+
+http://localhost:7080/admin/master/console/#/master/clients 
+
+clients -> Import Client -> add security.file
+
+//  keycloak doc REST APIs
+https://www.keycloak.org/docs-api/latest/rest-api/index.html
 
 // KeyCloak endpoints
 http://localhost:7080/realms/master/.well-known/openid-configuration
@@ -148,7 +154,23 @@ http://localhost:7080/realms/master/protocol/openid-connect/token
 
 
 Client ID    : breaking-bank-callcenter-cc   
-Client Secret: KNoKhp9U7ITIq9U9288oMFIwTGv7aiCZ
+Client Secret: ARdhiLMkBHeExbxBfPt9NluotEtjCtZ3
+
+
+
+Client ID    : breaking-bank-callcenter-ac 
+Client Secret: s6IrYVApyKVaPKegos3wVVhiXVaSRHif
+
+NQOaSH5JgT2CWVv4vWOZMxgucAIR07E7
+
+
+// End User
+user: johnDoe
+pass: 1234
+
+
+### learn more about 0auth 
+https://www.oauth.com/playground/
 
 ------------------------
 

@@ -162,7 +162,7 @@
 				<version>3.5.1</version>
                 <configuration>
                     <to>
-                        <image>cisu2/${project.artifactId}:s11</image>
+                        <image>cisu2/${project.artifactId}:s12</image>
                     </to>
                 </configuration>
             </plugin>
