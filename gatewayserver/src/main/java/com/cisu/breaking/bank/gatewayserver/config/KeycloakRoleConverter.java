@@ -15,14 +15,16 @@ import java.util.stream.Collectors;
 public class KeycloakRoleConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
     @Override
     public @Nullable Collection<GrantedAuthority> convert(Jwt source) {
-        Map<String, Object> realmAccess = (Map<String, Object>) source.getClaims().get("realm_access");
+        var realmAccess = (Map<String, Object>) source.getClaims().get("realm_access");
         if (realmAccess == null || realmAccess.isEmpty()) {
             return new ArrayList<>();
         }
-        Collection<GrantedAuthority> returnValue = ((List<String>) realmAccess.get("roles"))
+
+       var returnValue = ((List<String>) realmAccess.get("roles"))
                 .stream().map(roleName -> "ROLE_" + roleName)
                 .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+                .collect(Collectors.<GrantedAuthority>toList());
         return returnValue;
     }
 }
+
