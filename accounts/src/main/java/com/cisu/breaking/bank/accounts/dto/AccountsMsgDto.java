@@ -1,4 +1,4 @@
-package com.cisu.breaking.bank.message.dto;
+package com.cisu.breaking.bank.accounts.dto;
 
 /**
  * @param accountNumber

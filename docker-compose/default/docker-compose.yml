@@ -387,6 +387,8 @@ services:
         condition: service_healthy # service_completed_successfully
       accountsdb:
         condition: service_healthy
+      rabbit:
+        condition: service_healthy
 #    deploy:
 #      resources:
 #        limits:
@@ -398,6 +400,7 @@ services:
 #      SPRING_PROFILES_ACTIVE: "default"
       SPRING_APPLICATION_NAME: "accounts"
       SPRING_DATASOURCE_URL: "jdbc:postgresql://accountsdb:5432/accountsdb"
+      SPRING_RABBITMQ_HOST: "rabbit"
       OTEL_SERVICE_NAME: "accounts"
 
     extends:
@@ -496,6 +499,19 @@ services:
       SPRING_DATA_REDIS_TIMEOUT: 1s
       OTEL_SERVICE_NAME: "gatewayserver"
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI: "http://keycloak:8080/realms/master/protocol/openid-connect/certs"
+
+
+  message:
+    image: "cisu2/message:004"
+    container_name: message-ms
+    depends_on:
+      rabbit:
+        condition: service_healthy
+    environment:
+      SPRING_RABBITMQ_HOST: "rabbit"
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
 
 # create a network with the name of "cisu2network" and drive of "bridge"
 networks:

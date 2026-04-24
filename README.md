@@ -134,12 +134,25 @@ docker compose stop
 docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:4-management
 
 
+http://localhost:15672/#/
+
+username: guest
+password: guest
+
+
 # KeyCloak
 
 `docker run -d -p 127.0.0.1:7080:8080 -e KC_BOOTSTRAP_ADMIN_USERNAME=admin -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin quay.io/keycloak/keycloak:26.6.1 start-dev`
 
+`docker run -d -p 127.0.0.1:7080:8080 -e KC_BOOTSTRAP_ADMIN_USERNAME=admin -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin --name my_new_keycloak_container cisu2/keycloak:26.6.1 start-dev`
+
+
+`docker stast 32d216dc4ac7`
 
 http://localhost:7080/admin/master/console/#/master/clients 
+
+username: admin
+password: admin
 
 clients -> Import Client -> add security.file
 
