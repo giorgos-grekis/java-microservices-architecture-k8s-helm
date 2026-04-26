@@ -2,7 +2,8 @@ services:
 
   ### keycloak - 0auth services
   keycloak:
-    image: quay.io/keycloak/keycloak:26.4.7
+#    image: quay.io/keycloak/keycloak:26.4.7
+    image: cisu2/keycloak:26.6.1 # replace with our image
     container_name: keycloak
     ports:
       - "127.0.0.1:7080:8080"
@@ -266,20 +267,46 @@ services:
       file: common-config.yml # file name
       service: network-deploy-service # service to import from the file
 
+
+  # kafka
+  kafka:
+    image: apache/kafka:4.2.0
+    hostname: kafka
+    container_name: kafka
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_NODE_ID: 1
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:29093
+      KAFKA_LISTENERS: PLAINTEXT://kafka:29092,CONTROLLER://kafka:29093,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+    healthcheck:
+      test: [ "CMD-SHELL", "nc -z kafka 9092 || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
 # Accounts database
   accountsdb:
     image: postgres:18.3-alpine3.23
-#    container_name: accountsdb
     ports:
       - 5432:5432
-#    healthcheck:
-#      test: [ "CMD", "pg_isready", "-U", "postgres", "-d", "accountsdb" ]
-#      interval: 10s
-#      timeout: 5s
-#      retries: 5
-#      start_period: 10s
     environment:
-#      POSTGRES_PASSWORD: "root"
       POSTGRES_DB: "accountsdb"
     extends:
       file: common-config.yml # file name
@@ -287,18 +314,10 @@ services:
 
 # Loans Database
   loansdb:
-#    image: postgres:18.3-alpine3.23
     container_name: loansdb
     ports:
       - 5433:5432
-#    healthcheck:
-#      test: [ "CMD", "pg_isready", "-U", "postgres", "-d", "loansdb" ]
-#      interval: 10s
-#      timeout: 5s
-#      retries: 5
-#      start_period: 10s
     environment:
-#      POSTGRES_PASSWORD: "root"
       POSTGRES_DB: "loansdb"
     extends:
       file: common-config.yml # file name
@@ -306,18 +325,10 @@ services:
 
 # Cards Database
   cardsdb:
-#    image: postgres:18.3-alpine3.23
     container_name: cardsdb
     ports:
       - 5434:5432
-#    healthcheck:
-#      test: [ "CMD", "pg_isready", "-U", "postgres", "-d", "cardsdb" ]
-#      interval: 10s
-#      timeout: 5s
-#      retries: 5
-#      start_period: 10s
     environment:
-#      POSTGRES_PASSWORD: "root"
       POSTGRES_DB: "cardsdb"
     extends:
       file: common-config.yml # file name
@@ -331,20 +342,12 @@ services:
     depends_on:
       rabbit:
         condition: service_healthy
-#    healthcheck:
-#      test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit 1"
     healthcheck:
       test: "wget --no-verbose --tries=1 --spider http://localhost:8071/actuator/health/readiness || exit 1"
       interval: 20s # 3. run test command every  10 sec
       timeout: 5s # 4. fail the test if takes more than 5 sec
       retries: 20 # 2. if there is a failure try again for 10 times
       start_period: 5s # 1. start the test after 5 sec
-#    deploy:
-#      resources:
-#        limits:
-#          memory: 700m # max 700mb memory
-#    networks:
-#      - cisu2network
     extends:
       file: common-config.yml # file name
       service: microservice-base-config # service to import from the file
@@ -373,9 +376,6 @@ services:
   accounts:
     image: "cisu2/account:004"
     container_name: accounts-ms
-    #    not going to exposed this service to outside world
-#    ports:
-#      - "8080:8080"
     healthcheck:
       test: "wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health/readiness || exit 1"
       interval: 20s # 3. run test command every  10 sec
@@ -387,17 +387,12 @@ services:
         condition: service_healthy # service_completed_successfully
       accountsdb:
         condition: service_healthy
-      rabbit:
+      kafka:
         condition: service_healthy
-#    deploy:
-#      resources:
-#        limits:
-#          memory: 700m # max 700mb memory
-#    networks:
-#      - cisu2network
+#      rabbit:
+#        condition: service_healthy
+
     environment:
-#      SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
-#      SPRING_PROFILES_ACTIVE: "default"
       SPRING_APPLICATION_NAME: "accounts"
       SPRING_DATASOURCE_URL: "jdbc:postgresql://accountsdb:5432/accountsdb"
       SPRING_RABBITMQ_HOST: "rabbit"
@@ -410,9 +405,6 @@ services:
   loans:
     image: "cisu2/loans:004"
     container_name: loans-ms
-    #    not going to exposed this service to outside world
-#    ports:
-#      - "8090:8090"
     healthcheck:
       test: "wget --no-verbose --tries=1 --spider http://localhost:8090/actuator/health/readiness || exit 1"
       interval: 20s # 3. run test command every  10 sec
@@ -424,18 +416,10 @@ services:
         condition: service_healthy # service_completed_successfully
       loansdb:
         condition: service_healthy
-#    deploy:
-#      resources:
-#        limits:
-#          memory: 700m
-#    networks:
-#      - cisu2network # tag all ms under the same network
     extends:
       file: common-config.yml # file name
       service: microservice-eureka-config # service to import from the file
     environment:
-      #      SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
-      #      SPRING_PROFILES_ACTIVE: "default"
       SPRING_APPLICATION_NAME: "loans"
       SPRING_DATASOURCE_URL: "jdbc:postgresql://loansdb:5432/loansdb"
       OTEL_SERVICE_NAME: "loans"
@@ -443,9 +427,6 @@ services:
   cards:
     image: "cisu2/cards:004"
     container_name: cards-ms
-    #    not going to exposed this service to outside world
-#    ports:
-#      - "9000:9000"
     healthcheck:
       test: "wget --no-verbose --tries=1 --spider http://localhost:9000/actuator/health/readiness || exit 1"
       interval: 20s # 3. run test command every  10 sec
@@ -457,18 +438,10 @@ services:
         condition: service_healthy # service_completed_successfully
       cardsdb:
         condition: service_healthy
-#    deploy:
-#      resources:
-#        limits:
-#          memory: 700m
-#    networks:
-#      - cisu2network
     extends:
       file: common-config.yml # file name
       service: microservice-eureka-config # service to import from the file
     environment:
-      #      SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
-      #      SPRING_PROFILES_ACTIVE: "default"
       SPRING_APPLICATION_NAME: "cards"
       SPRING_DATASOURCE_URL: "jdbc:postgresql://cardsdb:5432/cardsdb"
       OTEL_SERVICE_NAME: "cards"

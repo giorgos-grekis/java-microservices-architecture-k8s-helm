@@ -104,6 +104,12 @@ docker build . -t cisu2/cards:001
 docker build . -t cisu2/configserver:001
 docker build . -t cisu2/eureka:001
 
+
+### kafka
+`docker run -p 9092:9092 apache/kafka:4.2.0`
+
+https://developer.confluent.io/confluent-tutorials/kafka-on-docker/
+
 ## go to the right folder /docker-compose/default {prod, qa}
 
 ### create/start docker compose

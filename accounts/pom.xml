@@ -64,9 +64,15 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream</artifactId>
 		</dependency>
+		<!-- rabbit mq -->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.cloud</groupId>-->
+<!--			<artifactId>spring-cloud-stream-binder-rabbit</artifactId>-->
+<!--		</dependency>-->
+		<!-- rabbit mq -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-stream-binder-rabbit</artifactId>
+			<artifactId>spring-cloud-stream-binder-kafka</artifactId>
 		</dependency>
 
 		<dependency>
@@ -172,7 +178,7 @@
 				<version>3.5.1</version>
                 <configuration>
                     <to>
-                        <image>cisu2/${project.artifactId}:s13</image>
+                        <image>cisu2/${project.artifactId}:s14</image>
                     </to>
                 </configuration>
             </plugin>
