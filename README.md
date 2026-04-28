@@ -110,6 +110,8 @@ docker build . -t cisu2/eureka:001
 
 https://developer.confluent.io/confluent-tutorials/kafka-on-docker/
 
+# Docker
+
 ## go to the right folder /docker-compose/default {prod, qa}
 
 ### create/start docker compose
@@ -121,6 +123,37 @@ https://developer.confluent.io/confluent-tutorials/kafka-on-docker/
 
 ## see all the docker networks
 `docker network ls`
+
+# Δες τα διαθέσιμα περιβάλλοντα
+`docker context ls`
+
+# Άλλαξε στο Native Docker
+`docker context use default`
+
+# επιστροφή στο Docker Desktop
+`docker context use desktop-linux`
+
+
+---------
+### Πήγαινε στην πηγή (Native Docker)
+`docker context use default`
+
+### Αποθήκευσε το image σε ένα αρχείο (Save)
+`docker save -o my-app.tar my-app:v1`
+
+
+### Άλλαξε στον προορισμό (Docker Desktop)
+`docker context use desktop-linux`
+
+### Φόρτωσε το image (Load)
+`docker load -i my-app.tar`
+
+
+### see all .tar files
+`ls -lh *.tar`
+
+
+____
 
 ----
 
@@ -186,6 +219,21 @@ NQOaSH5JgT2CWVv4vWOZMxgucAIR07E7
 // End User
 user: johnDoe
 pass: 1234
+
+
+----------------------------------------------------------------------------------------------
+## kubernetes
+
+https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
+
+https://docs.docker.com/desktop/use-desktop/kubernetes/
+
+kubectl
+https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-using-native-package-management
+
+kubectl config  get-contexts
+
+-----------------------------------------------------------------------------------------------
 
 
 ### learn more about 0auth 
@@ -285,3 +333,30 @@ ubiq
 
 sudo apt update
 sudo apt install -y apache2-utils
+sudo apt install -y apache2-utils
+
+
+--------------------------------------------------
+
+# Kubernetes
+
+[//]: # (https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/)
+
+https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+https://kubernetes.io/docs/concepts/configuration/configmap/
+
+Check for all deployments
+`kubectl get deployments`
+
+Check for all services
+`kubectl get services`
+
+`kubectl get replicaset`
+
+`kubectl get pods`
+
+`kubectl get configmaps`
+`kubectl get configmaps {name} -o yaml`
+go to specific folder with kubernetes yml file and run
+
+`kubectl apply -f {filename}.yml`
